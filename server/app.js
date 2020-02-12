@@ -48,12 +48,12 @@ app.get('/admin/article/:id/edit', (req, res) => {
     res.render('admin/editarticle', {publicPath});
 });
 
-app.get('/admin/user', (req, res) => {
-    res.render('admin/user', {publicPath});
+app.get('/admin/author', (req, res) => {
+    res.render('admin/author', {publicPath});
 });
 
-app.get('/admin/user/:id/edit', (req, res) => {
-    res.render('admin/edituser', {publicPath});
+app.get('/admin/author/:id/edit', (req, res) => {
+    res.render('admin/editauthor', {publicPath});
 });
 
 app.listen(3000, () => {

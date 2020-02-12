@@ -2,7 +2,7 @@
   <!-- Main Footer -->
   <footer class="main-footer">
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2020 Blogger Inc.</strong> All rights reserved.
+    <strong>Copyright &copy; 2020 <a href="/">Blogger Inc</a>.</strong> All rights reserved.
   </footer>
 </div>
 <!-- ./wrapper -->
@@ -15,5 +15,20 @@
 <script src="<%= publicPath %>plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Blogger App -->
 <script src="<%= publicPath %>js/adminlte.min.js"></script>
+<!-- Summernote -->
+<script src="<%= publicPath %>plugins/summernote/summernote-bs4.min.js"></script>
+<!-- bs-custom-file-input -->
+<script src="<%= publicPath %>plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+<script>
+  $(function () {
+    // Summernote
+    $('.textarea').summernote()
+  })
+</script>
+<script type="text/javascript">
+  $(document).ready(function () {
+    bsCustomFileInput.init();
+  });
+</script>
 </body>
 </html>
