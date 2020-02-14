@@ -1,6 +1,7 @@
 require('./config/config');
 const express = require('express');
 const path = require('path');
+const bodyParser = require('body-parser');
 
 var {mongoose} = require('./db/mongoose');
 
@@ -10,31 +11,14 @@ var {Comment} = require('./models/comment');
 var {Category} = require('./models/category');
 
 const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+
 const port = process.env.PORT;
 const publicPath = "/../../../";
 
 
 app.use(express.static(path.join(__dirname, '/../public')));
 app.set('view engine', 'ejs');
-
-app.get('/test', (req, res) => {
-    
-var author = new Author({
-    name: "Salami Haruna",
-    email: "sam@lak.dev",
-    bio: "The best node js guy in the town",
-    _role: "5e29532f5e318b1a244495b1",
-    picture: "/img/avatar.png",
-    password: "qwertyui"
-});
-
-author.save().then((docs) => {
-    console.log(docs);
-}, (e) => {
-    console.log(e);
-});
-
-});
 
 app.get('/', (req, res) => {
     res.render('blog/index', {publicPath});
@@ -60,6 +44,20 @@ app.get('/admin/category', (req, res) => {
     res.render('admin/category', {publicPath});
 });
 
+app.post('/admin/category', (req, res) => {
+    const category = new Category({
+        name: req.body.name,
+    });
+
+    category.save().then((docs) => {
+        console.log(docs);
+    }, (e) => {
+        console.log(e);
+    });
+
+    res.redirect('/admin/category');
+});
+
 app.get('/admin/category/:id/edit', (req, res) => {
     res.render('admin/editcategory', {publicPath});
 });
@@ -82,6 +80,10 @@ app.get('/admin/author', (req, res) => {
 
 app.get('/admin/author/:id/edit', (req, res) => {
     res.render('admin/editauthor', {publicPath});
+});
+
+app.get('/login', (req, res) => {
+    res.render('admin/login', {publicPath});
 });
 
 app.listen(port, () => {
