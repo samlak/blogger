@@ -1,12 +1,40 @@
+require('./config/config');
 const express = require('express');
 const path = require('path');
 
-const app = express();
+var {mongoose} = require('./db/mongoose');
 
+var {Author} = require('./models/author');
+var {Article} = require('./models/article');
+var {Comment} = require('./models/comment');
+var {Category} = require('./models/category');
+
+const app = express();
+const port = process.env.PORT;
 const publicPath = "/../../../";
+
 
 app.use(express.static(path.join(__dirname, '/../public')));
 app.set('view engine', 'ejs');
+
+app.get('/test', (req, res) => {
+    
+var author = new Author({
+    name: "Salami Haruna",
+    email: "sam@lak.dev",
+    bio: "The best node js guy in the town",
+    _role: "5e29532f5e318b1a244495b1",
+    picture: "/img/avatar.png",
+    password: "qwertyui"
+});
+
+author.save().then((docs) => {
+    console.log(docs);
+}, (e) => {
+    console.log(e);
+});
+
+});
 
 app.get('/', (req, res) => {
     res.render('blog/index', {publicPath});
@@ -56,6 +84,6 @@ app.get('/admin/author/:id/edit', (req, res) => {
     res.render('admin/editauthor', {publicPath});
 });
 
-app.listen(3000, () => {
-    console.log(`Listening to port 3000`)
+app.listen(port, () => {
+    console.log(`Listening to port ${port}`)
 })
