@@ -2,6 +2,9 @@ require('./config/config');
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
 
 var {mongoose} = require('./db/mongoose');
 
@@ -11,13 +14,21 @@ var {Comment} = require('./models/comment');
 var {Category} = require('./models/category');
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: false }));
 
 const port = process.env.PORT;
 const publicPath = "/../../../";
 
-
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser("keyboard_cat"));
+app.use(session({ 
+    secret: "keyboard_cat",
+    cookie: { maxAge: 60000 },
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(flash());
 app.use(express.static(path.join(__dirname, '/../public')));
+
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
@@ -41,20 +52,20 @@ app.get('/admin/dashboard', (req, res) => {
 });
 
 app.get('/admin/category', (req, res) => {
-    res.render('admin/category', {publicPath});
+    res.render('admin/category', {publicPath,  messages: req.flash('categoryCreated') });
 });
 
-app.post('/admin/category', (req, res) => {
+app.post('/admin/category', async (req, res) => {
     const category = new Category({
         name: req.body.name,
     });
 
-    category.save().then((docs) => {
-        console.log(docs);
+    await category.save().then((docs) => {
+        req.flash('categoryCreated', "Your category has been created successfully");
     }, (e) => {
-        console.log(e);
+        req.flash('categoryCreated', "There is problem creating a new category");
     });
-
+    
     res.redirect('/admin/category');
 });
 
