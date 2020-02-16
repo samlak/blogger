@@ -58,53 +58,27 @@
                 <h5 class="m-0">List of Category</h5>
               </div>
               <div class="card-body">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Football 
-                    <a href="/admin/category/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
+                <% if(categories.length > 0) { %>
+                  <ul class="list-group list-group-flush">
                     
-                    <a href="/admin/category/1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                  <li class="list-group-item">Politics
-                    <a href="/admin/category/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-                    
-                    <a href="/admin/category/1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                  <li class="list-group-item">Islam
-                    <a href="/admin/category/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-                    
-                    <a href="/admin/category/1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                  <li class="list-group-item">Career
-                    <a href="/admin/category/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-
-                    <a href="/admin/category/1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                  <li class="list-group-item">Charity
-                    <a href="/admin/category/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-                    
-                    <a href="/admin/category/1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                </ul>
+                    <% for(var i = 0; i < categories.length; i++) { %>
+                      <li class="list-group-item"><%= categories[i].name %>
+                        <a href="/admin/category/<%= categories[i]._id %>/edit" class="btn btn-secondary btn-sm ml-1">
+                          <i class="nav-icon fas fa-pencil-alt"></i>
+                        </a>
+                        
+                        <a href="/admin/category/<%= categories[i]._id %>/delete" class="btn btn-danger btn-sm ml-1">
+                          <i class="nav-icon fas fa-trash-alt"></i>
+                        </a>
+                      </li>
+                    <% }  %>
+                  </ul>
+                <% } %>
+                <% if(categories.length == 0) { %>
+                  <p class="text-center text-danger text-bold">
+                    No category created yet
+                  </p>
+                <% } %>
               </div>
             </div>
           </div>

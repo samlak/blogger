@@ -6,12 +6,14 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
 
-var {mongoose} = require('./db/mongoose');
+const {mongoose} = require('./db/mongoose');
 
-var {Author} = require('./models/author');
-var {Article} = require('./models/article');
-var {Comment} = require('./models/comment');
-var {Category} = require('./models/category');
+const {Author} = require('./models/author');
+const {Article} = require('./models/article');
+const {Comment} = require('./models/comment');
+const {Category} = require('./models/category');
+
+const {saveCategory, saveArticle, listCategory} = require('./controllers/admin');
 
 const app = express();
 
@@ -51,21 +53,13 @@ app.get('/admin/dashboard', (req, res) => {
     res.render('admin/dashboard', {publicPath});
 });
 
-app.get('/admin/category', (req, res) => {
-    res.render('admin/category', {publicPath,  messages: req.flash('categoryCreated') });
+app.get('/admin/category', async (req, res) => {
+    const categories = await listCategory(Category);
+    res.render('admin/category', {publicPath, categories, messages: req.flash('categoryCreated') });
 });
 
 app.post('/admin/category', async (req, res) => {
-    const category = new Category({
-        name: req.body.name,
-    });
-
-    await category.save().then((docs) => {
-        req.flash('categoryCreated', "Your category has been created successfully");
-    }, (e) => {
-        req.flash('categoryCreated', "There is problem creating a new category");
-    });
-    
+    await saveCategory(req, Category);
     res.redirect('/admin/category');
 });
 
@@ -74,11 +68,17 @@ app.get('/admin/category/:id/edit', (req, res) => {
 });
 
 app.get('/admin/article', (req, res) => {
-    res.render('admin/article', {publicPath});
+    res.render('admin/article', {publicPath, messages: req.flash('articleCreated') });
 });
 
-app.get('/admin/article/add', (req, res) => {
-    res.render('admin/addarticle', {publicPath});
+app.get('/admin/article/add', async (req, res) => {
+    const categories = await listCategory(Category);
+    res.render('admin/addarticle', {publicPath, categories});
+});
+
+app.post('/admin/article/add', async (req, res) => {
+    await saveArticle(req, Article);
+    res.redirect('/admin/article');
 });
 
 app.get('/admin/article/:id/edit', (req, res) => {
