@@ -24,6 +24,17 @@
     <div class="content">
       <div class="container-fluid">
         <div class="row">
+          
+          <% if (messages.length > 0) { %>
+            <div class="mx-5 col-lg-11 alert alert-warning alert-dismissible fade show" role="alert">
+              <%= messages %>
+
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          <% } %>
+
           <div class="col-lg-4">
             <div class="card card-primary card-outline">
               <div class="card-header">
@@ -38,53 +49,28 @@
                 <h5 class="m-0">List of Article</h5>
               </div>
               <div class="card-body">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Cras sit amet nibh libero, in gravida nulla
-                    <a href="/admin/article/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-
-                    <a href="/admin/article1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                  <li class="list-group-item">Cras sit amet nibh libero, in gravida nulla
-                    <a href="/admin/article/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-
-                    <a href="/admin/article1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                  <li class="list-group-item">Cras sit amet nibh libero, in gravida nulla
-                    <a href="/admin/article/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-
-                    <a href="/admin/article1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                  <li class="list-group-item">Cras sit amet nibh libero, in gravida nulla
-                    <a href="/admin/article/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-
-                    <a href="/admin/article1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                  <li class="list-group-item">Cras sit amet nibh libero, in gravida nulla
-                    <a href="/admin/article/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-
-                    <a href="/admin/article1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                </ul>
+                <% if(articles.length > 0) { %>
+                  <ul class="list-group list-group-flush">
+                    
+                    <% for(var i = 0; i < articles.length; i++) { %>
+                      <li class="list-group-item">
+                        <a href="/article/<%= articles[i]._id %>" class="card-link"><%= articles[i].title %></a>
+                        <a href="/admin/article/<%= articles[i]._id %>/edit" class="btn btn-secondary btn-sm ml-1">
+                          <i class="nav-icon fas fa-pencil-alt"></i>
+                        </a>
+                        
+                        <a href="/admin/article/<%= articles[i]._id %>/delete" class="btn btn-danger btn-sm ml-1">
+                          <i class="nav-icon fas fa-trash-alt"></i>
+                        </a>
+                      </li>
+                    <% }  %>
+                  </ul>
+                <% } %>
+                <% if(articles.length == 0) { %>
+                  <p class="text-center text-danger text-bold">
+                    No article created yet
+                  </p>
+                <% } %>
 
                 <nav class="mt-2 float-right" aria-label="Article navigation">
                   <ul class="pagination">

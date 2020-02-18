@@ -11,6 +11,32 @@ const listCategory = async (Category) => {
     };  
 };
 
+const listArticle = async (Article) => {
+    try{
+        const articles = [];
+        const article = await Article.find();
+        article.forEach((art) => {
+            articles.push(art);
+        });
+        return articles;
+    }catch(error) {
+        return error;
+    };  
+};
+
+const listAuthor = async (Author) => {
+    try{
+        const authors = [];
+        const author = await Author.find();
+        author.forEach((aut) => {
+            authors.push(aut);
+        });
+        return authors;
+    }catch(error) {
+        return error;
+    };  
+};
+
 const saveCategory = async (req, Category) => {
     const category = new Category({
         name: req.body.name,
@@ -25,14 +51,29 @@ const saveCategory = async (req, Category) => {
 
 const saveArticle = async (req, Article) => {
     const article = new Article({
-        name: req.body.name,
+        _author: "5e486243a85cc91ac0b9650b",
+        _category: req.body.category,
+        title: req.body.title,
+        content: req.body.content,
     });
 
-    await article.save().then((docs) => {
+    await article.save().then((result) => {
         req.flash('articleCreated', "Your article has been created successfully");
     }, (e) => {
         req.flash('articleCreated', "There is problem creating a new article");
     });
 };
 
-module.exports = {saveCategory, saveArticle, listCategory}
+const saveAuthor = async (req, Author) => {
+    const author = new Author({
+        
+    });
+
+    await author.save().then((result) => {
+        req.flash('authorCreated', "Author created successfully");
+    }, (e) => {
+        req.flash('authorCreated', "Error creating a new author");
+    });
+};
+
+module.exports = {saveCategory, saveArticle, saveAuthor, listCategory, listArticle, listAuthor}

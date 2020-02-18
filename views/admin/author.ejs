@@ -24,6 +24,17 @@
     <div class="content">
       <div class="container-fluid">
         <div class="row">
+          
+          <% if (messages.length > 0) { %>
+            <div class="mx-5 col-lg-11 alert alert-warning alert-dismissible fade show" role="alert">
+              <%= messages %>
+
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          <% } %>
+
           <div class="col-lg-6">
             <div class="card card-primary card-outline">
               <div class="card-header">
@@ -33,22 +44,22 @@
                 <form>
                   <div class="form-group">
                     <label for="name">Author Name</label>
-                    <input type="text" class="form-control" id="name" placeholder="Salami Harun">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Salami Harun">
                   </div>
 
                   <div class="form-group">
                     <label for="email">Author Email</label>
-                    <input type="email" class="form-control" id="email" placeholder="samlak@blogger.inc">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="samlak@blogger.inc">
                   </div>
 
                   <div class="form-group">
                     <label for="bio">Author Bio</label>
-                    <textarea class="form-control" id="bio" placeholder="Author biography"></textarea>
+                    <textarea class="form-control" id="bio" name="bio" placeholder="Author biography"></textarea>
                   </div>
 
                   <div class="form-group">
                     <label for="role">Author Role</label>
-                    <select class="custom-select" id="role">
+                    <select class="custom-select" id="role" name="role">
                       <option>Admin</option>
                       <option>Author</option>
                     </select>
@@ -56,7 +67,7 @@
 
                   <div class="form-group">
                     <label for="password">Author Password</label>
-                    <input type="password" class="form-control" id="password">
+                    <input type="password" class="form-control" id="password"  name="password">
                   </div>
 
                   <div class="form-group">
@@ -79,44 +90,29 @@
                 <h5 class="m-0">List of Author</h5>
               </div>
               <div class="card-body">
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">Sodawe Fedseo
-                    <a href="/admin/author/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
+                
+                <% if(authors.length > 0) { %>
+                  <ul class="list-group list-group-flush">
+                    
+                    <% for(var i = 0; i < authors.length; i++) { %>
+                      <li class="list-group-item"><%= authors[i].name %>
+                        <a href="/admin/author/<%= authors[i]._id %>/edit" class="btn btn-secondary btn-sm ml-1">
+                          <i class="nav-icon fas fa-pencil-alt"></i>
+                        </a>
+                        
+                        <a href="/admin/author/<%= authors[i]._id %>/delete" class="btn btn-danger btn-sm ml-1">
+                          <i class="nav-icon fas fa-trash-alt"></i>
+                        </a>
+                      </li>
+                    <% }  %>
+                  </ul>
+                <% } %>
+                <% if(authors.length == 0) { %>
+                  <p class="text-center text-danger text-bold">
+                    No author created yet
+                  </p>
+                <% } %>
 
-                    <a href="/admin/article1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                  <li class="list-group-item">Politicosa Abihubiye
-                    <a href="/admin/author/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-
-                    <a href="/admin/article1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                  <li class="list-group-item">Ilanurewa Erewaseruti
-                    <a href="/admin/author/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-
-                    <a href="/admin/article1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                  <li class="list-group-item">Careerewe Sofedinopout
-                    <a href="/admin/author/1/edit" class="btn btn-secondary btn-sm ml-1">
-                      <i class="nav-icon fas fa-pencil-alt"></i>
-                    </a>
-
-                    <a href="/admin/article1/delete" class="btn btn-danger btn-sm ml-1">
-                      <i class="nav-icon fas fa-trash-alt"></i>
-                    </a>
-                  </li>
-                </ul>
               </div>
             </div>
           </div>

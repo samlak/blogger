@@ -13,7 +13,7 @@ const {Article} = require('./models/article');
 const {Comment} = require('./models/comment');
 const {Category} = require('./models/category');
 
-const {saveCategory, saveArticle, listCategory} = require('./controllers/admin');
+const {saveCategory, saveArticle, saveAuthor, listCategory, listArticle, listAuthor} = require('./controllers/admin');
 
 const app = express();
 
@@ -67,8 +67,9 @@ app.get('/admin/category/:id/edit', (req, res) => {
     res.render('admin/editcategory', {publicPath});
 });
 
-app.get('/admin/article', (req, res) => {
-    res.render('admin/article', {publicPath, messages: req.flash('articleCreated') });
+app.get('/admin/article', async (req, res) => {
+    const articles = await listArticle(Article);
+    res.render('admin/article', {publicPath, articles, messages: req.flash('articleCreated') });
 });
 
 app.get('/admin/article/add', async (req, res) => {
@@ -85,8 +86,14 @@ app.get('/admin/article/:id/edit', (req, res) => {
     res.render('admin/editarticle', {publicPath});
 });
 
-app.get('/admin/author', (req, res) => {
-    res.render('admin/author', {publicPath});
+app.get('/admin/author', async (req, res) => {
+    const authors = await listAuthor(Author);
+    res.render('admin/author', {publicPath, authors, messages: req.flash('authorCreated') });
+});
+
+app.post('/admin/author', async (req, res) => {
+    await saveAuthor(req, Author);
+    res.redirect('/admin/author');
 });
 
 app.get('/admin/author/:id/edit', (req, res) => {
