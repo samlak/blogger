@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
+// const fileupload = require('express-fileupload');
 
 const {mongoose} = require('./db/mongoose');
 
@@ -13,28 +14,34 @@ const {Article} = require('./models/article');
 const {Comment} = require('./models/comment');
 const {Category} = require('./models/category');
 
-const {saveCategory, saveArticle, saveAuthor, listCategory, listArticle, listAuthor} = require('./controllers/admin');
+const adminController = require('./controllers/admin');
+const publicController = require('./controllers/public');
 
 const app = express();
 
 const port = process.env.PORT;
 const publicPath = "/../../../";
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser("keyboard_cat"));
-app.use(session({ 
-    secret: "keyboard_cat",
-    cookie: { maxAge: 60000 },
-    resave: false,
-    saveUninitialized: false
-}));
-app.use(flash());
-app.use(express.static(path.join(__dirname, '/../public')));
+app.use(
+    bodyParser.urlencoded({ extended: false }),
+    cookieParser("keyboard_cat"),
+    session({ 
+        secret: "keyboard_cat",
+        cookie: { maxAge: 60000 },
+        resave: false,
+        saveUninitialized: false
+    }),
+    flash(),
+    express.static(path.join(__dirname, '/../public')),
+    // fileupload()
+);
 
 app.set('view engine', 'ejs');
 
-app.get('/', (req, res) => {
-    res.render('blog/index', {publicPath});
+app.get('/', async (req, res) => {
+    const categories = await adminController.listCategory(Category);
+    const articles = await adminController.listArticle(Article);
+    res.render('blog/index', {publicPath, categories, articles });
 });
 
 app.get('/trending', (req, res) => {
@@ -54,12 +61,12 @@ app.get('/admin/dashboard', (req, res) => {
 });
 
 app.get('/admin/category', async (req, res) => {
-    const categories = await listCategory(Category);
+    const categories = await adminController.listCategory(Category);
     res.render('admin/category', {publicPath, categories, messages: req.flash('categoryCreated') });
 });
 
 app.post('/admin/category', async (req, res) => {
-    await saveCategory(req, Category);
+    await adminController.saveCategory(req, Category);
     res.redirect('/admin/category');
 });
 
@@ -68,17 +75,17 @@ app.get('/admin/category/:id/edit', (req, res) => {
 });
 
 app.get('/admin/article', async (req, res) => {
-    const articles = await listArticle(Article);
+    const articles = await adminController.listArticle(Article);
     res.render('admin/article', {publicPath, articles, messages: req.flash('articleCreated') });
 });
 
 app.get('/admin/article/add', async (req, res) => {
-    const categories = await listCategory(Category);
+    const categories = await adminController.listCategory(Category);
     res.render('admin/addarticle', {publicPath, categories});
 });
 
 app.post('/admin/article/add', async (req, res) => {
-    await saveArticle(req, Article);
+    await adminController.saveArticle(req, Article);
     res.redirect('/admin/article');
 });
 
@@ -87,12 +94,12 @@ app.get('/admin/article/:id/edit', (req, res) => {
 });
 
 app.get('/admin/author', async (req, res) => {
-    const authors = await listAuthor(Author);
+    const authors = await adminController.listAuthor(Author);
     res.render('admin/author', {publicPath, authors, messages: req.flash('authorCreated') });
 });
 
 app.post('/admin/author', async (req, res) => {
-    await saveAuthor(req, Author);
+    await adminController.saveAuthor(req, Author);
     res.redirect('/admin/author');
 });
 

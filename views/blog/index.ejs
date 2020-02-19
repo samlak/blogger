@@ -1,7 +1,7 @@
 <%- include('../partials/blog/header'); %>
 
   <!--Section: Jumbotron-->
-  <section class="card wow fadeIn" style="background-image: url(https://mdbootstrap.com/img/Photos/Others/gradient1.jpg);">
+  <section class="card wow fadeIn" style="background-image: url(<%=publicPath%>img/sample.jpg);">
 
     <!-- Content -->
     <div class="card-body text-white text-center py-5 px-5 my-5">
@@ -15,11 +15,10 @@
       <p class="mb-4">
         <strong>You will get information from various source across all sectors</strong>
       </p>
-      <a href="category-page.html" class="btn btn-outline-white btn-lg">Football</a>
-      <a href="category-page.html" class="btn btn-outline-white btn-lg">Industry</a>
-      <a href="category-page.html" class="btn btn-outline-white btn-lg">Technology</a>
-      <a href="category-page.html" class="btn btn-outline-white btn-lg">Psychology</a>
-
+      
+      <% for(var i = 0; i < categories.length; i++) { %>
+        <a href="/category/<%= categories[i].name %>" class="btn btn-outline-white btn-lg"><%= categories[i].name %></a>
+      <% }  %>
     </div>
     <!-- Content -->
   </section>
@@ -33,101 +32,41 @@
     <!--Grid row-->
     <div class="row mb-4 wow fadeIn">
 
-      <!--Grid column-->
-      <div class="col-lg-4 col-md-6 mb-4">
+      <% for(var i = 0; i < articles.length; i++) { %>
+        <!--Grid column-->
+        <div class="col-lg-4 col-md-6 mb-4">
 
-        <!--Card-->
-        <div class="card">
+          <!--Card-->
+          <div class="card">
 
-          <!--Card image-->
-          <div class="view overlay">
-            <img src="https://mdbootstrap.com/wp-content/uploads/2017/11/brandflow-tutorial-fb.jpg" class="card-img-top" alt="">
-            <a href="/article/eds">
-              <div class="mask rgba-white-slight"></div>
-            </a>
+            <!--Card image-->
+            <div class="view overlay">
+              <img src="<%= publicPath %>upload/<%= articles[i].image %>" class="card-img-top" alt="">
+              <a href="/article/<%= articles[i].title %>">
+                <div class="mask rgba-white-slight"></div>
+              </a>
+            </div>
+
+            <!--Card content-->
+            <div class="card-body">
+              <!--Title-->
+              <h4 class="card-title"><%= articles[i].title %></h4>
+              <!--Text-->
+              <p class="card-text">
+                <%= articles[i].content %>
+              </p>
+              <a href="/article/<%= articles[i].title %>" class="btn btn-primary btn-md">Read More
+                <i class="fas fa-play ml-2"></i>
+              </a>
+            </div>
+
           </div>
-
-          <!--Card content-->
-          <div class="card-body">
-            <!--Title-->
-            <h4 class="card-title">Bootstrap Automation</h4>
-            <!--Text-->
-            <p class="card-text">Learn how to create a smart website which learns your user and reacts properly to
-              his behavior.</p>
-            <a href="/article/eds" class="btn btn-primary btn-md">Read More
-              <i class="fas fa-play ml-2"></i>
-            </a>
-          </div>
+          <!--/.Card-->
 
         </div>
-        <!--/.Card-->
-
-      </div>
-      <!--Grid column-->
-
-      <!--Grid column-->
-      <div class="col-lg-4 col-md-6 mb-4">
-
-        <!--Card-->
-        <div class="card">
-
-          <!--Card image-->
-          <div class="view overlay">
-            <img src="https://mdbootstrap.com/wp-content/uploads/2017/11/brandflow-tutorial-fb.jpg" class="card-img-top" alt="">
-            <a href="post-page.html">
-              <div class="mask rgba-white-slight"></div>
-            </a>
-          </div>
-
-          <!--Card content-->
-          <div class="card-body">
-            <!--Title-->
-            <h4 class="card-title">Bootstrap Automation</h4>
-            <!--Text-->
-            <p class="card-text">Learn how to create a smart website which learns your user and reacts properly to
-              his behavior.</p>
-            <a href="/article/eds" class="btn btn-primary btn-md">Read More
-              <i class="fas fa-play ml-2"></i>
-            </a>
-          </div>
-
-        </div>
-        <!--/.Card-->
-
-      </div>
-      <!--Grid column-->
-
-      <!--Grid column-->
-      <div class="col-lg-4 col-md-6 mb-4">
-
-        <!--Card-->
-        <div class="card">
-
-          <!--Card image-->
-          <div class="view overlay">
-            <img src="https://mdbootstrap.com/wp-content/uploads/2017/11/brandflow-tutorial-fb.jpg" class="card-img-top" alt="">
-            <a href="post-page.html">
-              <div class="mask rgba-white-slight"></div>
-            </a>
-          </div>
-
-          <!--Card content-->
-          <div class="card-body">
-            <!--Title-->
-            <h4 class="card-title">Bootstrap Automation</h4>
-            <!--Text-->
-            <p class="card-text">Learn how to create a smart website which learns your user and reacts properly to
-              his behavior.</p>
-            <a href="post-page.html" class="btn btn-primary btn-md">Read More
-              <i class="fas fa-play ml-2"></i>
-            </a>
-          </div>
-
-        </div>
-        <!--/.Card-->
-
-      </div>
-      <!--Grid column-->
+        <!--Grid column-->
+      <% }  %>
+      
 
     </div>
     <!--Grid row-->

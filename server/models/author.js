@@ -4,11 +4,7 @@ const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
-var AuthorSchema = new mongoose.Schema({
-    _role: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
-    },
+const AuthorSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -24,6 +20,11 @@ var AuthorSchema = new mongoose.Schema({
             message: '{VALUE} is not valid email'
         }
     },
+    role: {
+        type: String,
+        required: true,
+        trim: true
+    },
     bio: {
         type: String,
         required: true,
@@ -31,7 +32,7 @@ var AuthorSchema = new mongoose.Schema({
     },
     picture: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     password: {
@@ -41,6 +42,21 @@ var AuthorSchema = new mongoose.Schema({
     },
 });
 
-var Author = mongoose.model('Author', AuthorSchema);
+AuthorSchema.pre('save', function (next) {
+    var author = this;
+    if(author.isModified('password')){
+        bcrypt.genSalt(10, (err,  salt) => {
+            bcrypt.hash(author.password, salt, (err, hash) => {
+                author.password = hash;
+                next();
+            });
+        });
+        
+    }else{
+        next();
+    }
+});
+
+const Author = mongoose.model('Author', AuthorSchema);
 
 module.exports = {Author};
