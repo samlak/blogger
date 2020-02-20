@@ -7,6 +7,10 @@ var CategorySchema = new mongoose.Schema({
         required: true,
         trim: true,
         unique: true
+    },
+    description: {
+        type: String,
+        trim: true
     }
 });
 

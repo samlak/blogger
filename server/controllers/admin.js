@@ -11,6 +11,27 @@ const listCategory = async (Category) => {
     };  
 };
 
+const saveCategory = async (req, Category) => {
+    const category = new Category({
+        name: req.body.name,
+        description: req.body.description,
+    });
+
+    await category.save().then((result) => {
+        req.flash('categoryCreated', "Your category has been created successfully");
+    }, (erro) => {
+        req.flash('categoryCreated', "There is problem creating a new category");
+    });
+};
+
+const deleteCategory = async (req, Category) => {
+    await Category.findByIdAndRemove(req.params.id).then((result) => {
+        req.flash('categoryDeleted', "Your category has been deleted successfully");
+    }, (erro) => {
+        req.flash('categoryDeleted', "Error deleting your category");
+    });
+};
+
 const listArticle = async (Article) => {
     try{
         const articles = [];
@@ -22,31 +43,6 @@ const listArticle = async (Article) => {
     }catch(error) {
         return error;
     };  
-};
-
-const listAuthor = async (Author) => {
-    try{
-        const authors = [];
-        const author = await Author.find();
-        author.forEach((aut) => {
-            authors.push(aut);
-        });
-        return authors;
-    }catch(error) {
-        return error;
-    };  
-};
-
-const saveCategory = async (req, Category) => {
-    const category = new Category({
-        name: req.body.name,
-    });
-
-    await category.save().then((result) => {
-        req.flash('categoryCreated', "Your category has been created successfully");
-    }, (erro) => {
-        req.flash('categoryCreated', "There is problem creating a new category");
-    });
 };
 
 const saveArticle = async (req, Article) => {
@@ -62,6 +58,27 @@ const saveArticle = async (req, Article) => {
     }, (e) => {
         req.flash('articleCreated', "There is problem creating a new article");
     });
+};
+
+const deleteArticle = async (req, Article) => {
+    await Article.findByIdAndRemove(req.params.id).then((result) => {
+        req.flash('articleDeleted', "Your article has been deleted successfully");
+    }, (e) => {
+        req.flash('articleDeleted', "Error deleting your article");
+    });
+};
+
+const listAuthor = async (Author) => {
+    try{
+        const authors = [];
+        const author = await Author.find();
+        author.forEach((aut) => {
+            authors.push(aut);
+        });
+        return authors;
+    }catch(error) {
+        return error;
+    };  
 };
 
 const saveAuthor = async (req, Author) => {
@@ -81,4 +98,21 @@ const saveAuthor = async (req, Author) => {
     });
 };
 
-module.exports = {saveCategory, saveArticle, saveAuthor, listCategory, listArticle, listAuthor}
+const deleteAuthor = async (req, Author) => {
+    await Author.findByIdAndRemove(req.params.id).then((result) => {
+        req.flash('authorDeleted', "Author deleted successfully");
+    }, (e) => {
+        req.flash('authorDeleted', "Error deleting your author");
+    });
+};
+
+const getOverview = async (Article, Author, Category, Comment) => {
+    const articles = await Article.find().count();
+    const authors = await Author.find().count();
+    const categories = await Category.find().count();
+    const comments = await Comment.find().count();
+
+    return {articles, authors, categories, comments};
+}
+
+module.exports = {saveCategory, saveArticle, saveAuthor, listCategory, listArticle, listAuthor, getOverview, deleteCategory, deleteArticle, deleteAuthor};

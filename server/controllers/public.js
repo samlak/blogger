@@ -24,6 +24,38 @@ const listArticle = async (Article) => {
     };  
 };
 
+const getArticle = async (title, Article) => {
+    try{
+        const articles = [];
+        const article = await Article.find();
+        article.forEach((art) => {
+            articles.push(art);
+        });
+        return articles;
+    }catch(error) {
+        return error;
+    };  
+};
+
+const getArticleInCategory = async (name, Category, Article) => {
+    try{
+        const category = await Category.findOne({name});
+        const article = await Article.find({_category: category.id});
+        return [article, category];
+    }catch(error) {
+        return error;
+    };  
+};
+
+const getTrending = async (Article) => {
+    try{
+        const article = await Article.find();
+        return article;
+    }catch(error) {
+        return error;
+    };  
+};
+
 const listAuthor = async (Author) => {
     try{
         const authors = [];
@@ -81,4 +113,4 @@ const saveAuthor = async (req, Author) => {
     });
 };
 
-module.exports = {saveCategory, saveArticle, saveAuthor, listCategory, listArticle, listAuthor}
+module.exports = {saveCategory, saveArticle, saveAuthor, listCategory, listArticle, listAuthor, getArticleInCategory, getTrending}

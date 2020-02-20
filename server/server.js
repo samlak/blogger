@@ -38,31 +38,42 @@ app.use(
 
 app.set('view engine', 'ejs');
 
+// PUBLIC ROUTE
 app.get('/', async (req, res) => {
     const categories = await adminController.listCategory(Category);
     const articles = await adminController.listArticle(Article);
     res.render('blog/index', {publicPath, categories, articles });
 });
 
-app.get('/trending', (req, res) => {
-    res.render('blog/trending', {publicPath});
+app.get('/trending', async(req, res) => {
+    const articles = await publicController.getTrending(Article);
+    res.render('blog/trending', {publicPath, articles});
 });
 
 app.get('/article/:title', (req, res) => {
     res.render('blog/article', {publicPath});
 });
 
-app.get('/category/:name', (req, res) => {
-    res.render('blog/category', {publicPath});
+app.get('/category/:name', async(req, res) => {
+    const name = req.params.name;
+    const articles = await publicController.getArticleInCategory(name, Category, Article);
+    res.render('blog/category', {publicPath, articles});
 });
 
-app.get('/admin/dashboard', (req, res) => {
-    res.render('admin/dashboard', {publicPath});
+// ADMIN ROUTE
+app.get('/admin/dashboard', async (req, res) => {
+    const overview = await adminController.getOverview(Article, Author, Category, Comment);
+    res.render('admin/dashboard', {publicPath, overview});
 });
 
+// Category
 app.get('/admin/category', async (req, res) => {
     const categories = await adminController.listCategory(Category);
-    res.render('admin/category', {publicPath, categories, messages: req.flash('categoryCreated') });
+    res.render('admin/category', {
+        publicPath, categories, 
+        categoryCreated: req.flash('categoryCreated'),
+        categoryDeleted: req.flash('categoryDeleted')
+    });
 });
 
 app.post('/admin/category', async (req, res) => {
@@ -74,9 +85,19 @@ app.get('/admin/category/:id/edit', (req, res) => {
     res.render('admin/editcategory', {publicPath});
 });
 
+app.get('/admin/category/:id/delete', async (req, res) => {
+    await adminController.deleteCategory(req, Category);
+    res.redirect('/admin/category');
+});
+
+// Article
 app.get('/admin/article', async (req, res) => {
     const articles = await adminController.listArticle(Article);
-    res.render('admin/article', {publicPath, articles, messages: req.flash('articleCreated') });
+    res.render('admin/article', {
+        publicPath, articles, 
+        articleCreated: req.flash('articleCreated'),
+        articleDeleted: req.flash('articleDeleted')
+    });
 });
 
 app.get('/admin/article/add', async (req, res) => {
@@ -93,9 +114,19 @@ app.get('/admin/article/:id/edit', (req, res) => {
     res.render('admin/editarticle', {publicPath});
 });
 
+app.get('/admin/article/:id/delete', async (req, res) => {
+    await adminController.deleteArticle(req, Article);
+    res.redirect('/admin/article');
+});
+
+// Author
 app.get('/admin/author', async (req, res) => {
     const authors = await adminController.listAuthor(Author);
-    res.render('admin/author', {publicPath, authors, messages: req.flash('authorCreated') });
+    res.render('admin/author', {
+        publicPath, authors, 
+        authorCreated: req.flash('authorCreated'),
+        authorDeleted: req.flash('authorDeleted') 
+    });
 });
 
 app.post('/admin/author', async (req, res) => {
@@ -105,6 +136,11 @@ app.post('/admin/author', async (req, res) => {
 
 app.get('/admin/author/:id/edit', (req, res) => {
     res.render('admin/editauthor', {publicPath});
+});
+
+app.get('/admin/author/:id/delete', async (req, res) => {
+    await adminController.deleteAuthor(req, Author);
+    res.redirect('/admin/author');
 });
 
 app.get('/login', (req, res) => {

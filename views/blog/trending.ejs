@@ -10,7 +10,7 @@
         <strong>Trending</strong>
       </h1>
       <p>
-        <strong>This is the most sought after story</strong>
+        <strong>Read the most sought after story</strong>
       </p>
 
     </div>
@@ -21,96 +21,44 @@
   <!--Section: Cards-->
   <section class="pt-5">
 
-    <!--Grid row-->
-    <div class="row wow fadeIn">
+    <% if(articles.length > 0) { %>
+      <% for(var i = 0; i < articles.length; i++) { %>
+        <!--Grid row-->
+        <div class="row wow fadeIn">
 
-      <!--Grid column-->
-      <div class="col-lg-5 col-xl-4 mb-4">
-        <!--Featured image-->
-        <div class="view overlay rounded z-depth-1">
-          <img src="https://mdbootstrap.com/wp-content/uploads/2017/11/brandflow-tutorial-fb.jpg" class="img-fluid" alt="">
-          <a href="#">
-            <div class="mask rgba-white-slight"></div>
-          </a>
+          <!--Grid column-->
+          <div class="col-lg-5 col-xl-4 mb-4">
+            <!--Featured image-->
+            <div class="view overlay rounded z-depth-1">
+              <img src="<%= publicPath %>upload/<%= articles[i].image %>" class="img-fluid" alt="">
+              <a href="/article/<%= articles[i].title %>">
+                <div class="mask rgba-white-slight"></div>
+              </a>
+            </div>
+          </div>
+          <!--Grid column-->
+
+          <!--Grid column-->
+          <div class="col-lg-7 col-xl-7 ml-xl-4 mb-4">
+            <h3 class="mb-3 font-weight-bold dark-grey-text">
+              <strong><%= articles[i].title %></strong>
+            </h3>
+            <p class="grey-text"> <%= articles[i].content %></p>
+            <a href="/article/<%= articles[i].title %>" class="btn btn-primary btn-md">Read More</a>
+          </div>
+          <!--Grid column-->
+
         </div>
-      </div>
-      <!--Grid column-->
+        <!--Grid row-->
+        <hr class="mb-5">   
+      <% }  %>
+        
+    <% }  %>
+    
+    <% if(articles.length == 0) { %>
+      <p class="text-bolder text-center text-danger"><strong> No article article yet </strong></p>
+    <% }  %>
 
-      <!--Grid column-->
-      <div class="col-lg-7 col-xl-7 ml-xl-4 mb-4">
-        <h3 class="mb-3 font-weight-bold dark-grey-text">
-          <strong>Bootstrap Automation</strong>
-        </h3>
-        <p class="grey-text">Learn how to create a smart website which learns your user and reacts properly to his
-          behavior.</p>
-        <a href="#" class="btn btn-primary btn-md">Read More</a>
-      </div>
-      <!--Grid column-->
-
-    </div>
-    <!--Grid row-->
-
-    <hr class="mb-5">
-
-    <!--Grid row-->
-    <div class="row wow fadeIn">
-
-      <!--Grid column-->
-      <div class="col-lg-5 col-xl-4 mb-4">
-        <!--Featured image-->
-        <div class="view overlay rounded z-depth-1">
-          <img src="https://mdbootstrap.com/wp-content/uploads/2017/11/brandflow-tutorial-fb.jpg" class="img-fluid" alt="">
-          <a href="#">
-            <div class="mask rgba-white-slight"></div>
-          </a>
-        </div>
-      </div>
-      <!--Grid column-->
-
-      <!--Grid column-->
-      <div class="col-lg-7 col-xl-7 ml-xl-4 mb-4">
-        <h3 class="mb-3 font-weight-bold dark-grey-text">
-          <strong>Bootstrap Automation</strong>
-        </h3>
-        <p class="grey-text">Learn how to create a smart website which learns your user and reacts properly to his
-          behavior.</p>
-        <a href="#" class="btn btn-primary btn-md">Read More</a>
-      </div>
-      <!--Grid column-->
-
-    </div>
-    <!--Grid row-->
-
-    <hr class="mb-5">
-
-    <!--Grid row-->
-    <div class="row wow fadeIn">
-
-      <!--Grid column-->
-      <div class="col-lg-5 col-xl-4 mb-4">
-        <!--Featured image-->
-        <div class="view overlay rounded z-depth-1">
-          <img src="https://mdbootstrap.com/wp-content/uploads/2017/11/brandflow-tutorial-fb.jpg" class="img-fluid" alt="">
-          <a href="#">
-            <div class="mask rgba-white-slight"></div>
-          </a>
-        </div>
-      </div>
-      <!--Grid column-->
-
-      <!--Grid column-->
-      <div class="col-lg-7 col-xl-7 ml-xl-4 mb-4">
-        <h3 class="mb-3 font-weight-bold dark-grey-text">
-          <strong>Bootstrap Automation</strong>
-        </h3>
-        <p class="grey-text">Learn how to create a smart website which learns your user and reacts properly to his
-          behavior.</p>
-        <a href="#" class="btn btn-primary btn-md">Read More</a>
-      </div>
-      <!--Grid column-->
-
-    </div>
-    <!--Grid row-->
 
   </section>
   <!--Section: Cards-->
