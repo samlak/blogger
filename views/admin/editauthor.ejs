@@ -30,7 +30,7 @@
                 <h5 class="m-0">Update Author</h5>
               </div>
               <div class="card-body">
-                <form method="POST" action="">
+                <form method="POST" action="" enctype="multipart/form-data">
                   <div class="form-group">
                     <label for="name">Author Name</label>
                     <input type="text" class="form-control" id="name" name="name" value="<%= author.name %>">
@@ -58,11 +58,6 @@
                     <label for="password">Author Password</label>
                     <input type="password" class="form-control" id="password" name="password">
                   </div>
-
-                  <div class="form-group">
-                    <img src="<%= publicPath %>img/avatar.png" alt="Profile Picture" height="100px" width="100px" class="img-thumbnail">
-                    <label>No Profile Picture</label>
-                  </div>
                   
                   <div class="form-group">
                     <label for="picture">Author Profile Picture</label>
@@ -70,6 +65,15 @@
                       <input type="file" class="custom-file-input" name="picture" id="customFile">
                       <label class="custom-file-label" for="customFile">Choose file</label>
                     </div>
+                  </div>
+
+                  <div class="form-group">
+                    <% if(typeof author.picture != 'undefined' && author.picture != '') { %>
+                      <img src="<%= publicPath %>upload/<%= author.picture %>" alt="Profile Picture" height="100px" width="100px" class="img-thumbnail">
+                    <% } %>
+                    <% if(typeof author.picture == 'undefined' || author.picture == '') { %>
+                      <label class="text-center text-danger">No profile picture</label>
+                    <% } %>
                   </div>
 
                   <button type="submit" class="btn btn-primary">Update Author</button>

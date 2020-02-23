@@ -1,18 +1,30 @@
 const saveAuthor = async (req, Author) => {
+    try {
+        const image = req.files.picture;
+        const modifiedName = new Date().getTime() + image.name ;
+        const path = __dirname + '/../../public/upload/' + modifiedName;
+        
+        await image.mv(path);
+        
+        const author = new Author({
+            name: req.body.name,
+            email: req.body.email,
+            bio: req.body.bio,
+            role: req.body.role,
+            password: req.body.password,
+            picture: modifiedName
+        });
     
-    const author = new Author({
-        name: req.body.name,
-        email: req.body.email,
-        bio: req.body.bio,
-        role: req.body.role,
-        password: req.body.password,
-    });
+        await author.save().then((result) => {
+            req.flash('authorCreated', "Author created successfully");
+        }, (e) => {
+            req.flash('authorCreated', "Error creating a new author");
+        });
 
-    await author.save().then((result) => {
-        req.flash('authorCreated', "Author created successfully");
-    }, (e) => {
-        req.flash('authorCreated', "Error creating a new author");
-    });
+    } catch (error) {
+        req.flash('authorCreated', "There is problem uploading picture");
+        console.log(error);
+    }
 };
 
 const deleteAuthor = async (req, Author) => {

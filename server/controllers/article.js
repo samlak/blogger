@@ -1,16 +1,29 @@
 const saveArticle = async (req, Article) => {
-    const article = new Article({
-        _author: "5e486243a85cc91ac0b9650b",
-        _category: req.body.category,
-        title: req.body.title,
-        content: req.body.content,
-    });
+    try {
+        const image = req.files.image;
+        const modifiedName = new Date().getTime() + image.name ;
+        const path = __dirname + '/../../public/upload/' + modifiedName;
+        
+        await image.mv(path);
+        
+        const article = new Article({
+            _author: "5e4da886e4f93d18a024e699",
+            _category: req.body.category,
+            title: req.body.title,
+            content: req.body.content,
+            image: modifiedName
+        });
+    
+        await article.save().then((result) => {
+            req.flash('articleCreated', "Your article has been created successfully");
+        }, (e) => {
+            req.flash('articleCreated', "There is problem creating a new article");
+        });
 
-    await article.save().then((result) => {
-        req.flash('articleCreated', "Your article has been created successfully");
-    }, (e) => {
-        req.flash('articleCreated', "There is problem creating a new article");
-    });
+    } catch (error) {
+        req.flash('articleCreated', "There is problem uploading image for your new article");
+        console.log(error);
+    }
 };
 
 const deleteArticle = async (req, Article) => {

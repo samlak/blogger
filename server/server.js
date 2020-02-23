@@ -150,26 +150,7 @@ app.get('/admin/author', async (req, res) => {
 });
 
 app.post('/admin/author', async (req, res) => {
-    // await AuthorController.saveAuthor(req, Author);
-    try {
-        const image = req.files.image;
-        const modifiedName = image.name + new Date().getTime();
-        const path = __dirname + '/../../public/images/' + modifiedName;
-        image.mv(path);
-        const article = new Article({
-            _author: "5e486243a85cc91ac0b9650b",
-            _category: req.body.category,
-            title: req.body.title,
-            content: req.body.content,
-            image: modifiedName
-        });
-    
-        await article.save();
-        req.flash('articleCreated', "Your article has been created successfully");
-    } catch (error) {
-        req.flash('articleCreated', "There is problem creating a new article");
-        console.log(error);
-    }
+    await AuthorController.saveAuthor(req, Author);
     
     res.redirect('/admin/author');
 });

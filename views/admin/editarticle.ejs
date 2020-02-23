@@ -30,7 +30,7 @@
                 <h5 class="m-0">Update Article</h5>
               </div>
               <div class="card-body">
-                <form method="POST" action=""> 
+                <form method="POST" action="" enctype="multipart/form-data"> 
                   <div class="form-group">
                     <label for="title">Article Title</label>
                     <input type="text" class="form-control" id="title" name="title" value="<%= article.title %>">
@@ -44,7 +44,24 @@
                       <% }  %>
                     </select>
                   </div>
+
+                  <div class="form-group">
+                    <label for="image">Featured Image</label>
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" name="image" id="image">
+                      <label class="custom-file-label" for="image">Choose file</label>
+                    </div>
+                  </div>
                   
+                  <div class="form-group">
+                    <% if(typeof article.image != 'undefined' && article.image != '') { %>
+                      <img src="<%= publicPath %>upload/<%= article.image %>" alt="Featured image" height="100px" width="500px" class="img-thumbnail text-center>
+                    <% } %>
+                    <% if(typeof article.image == 'undefined' || article.image == '') { %>
+                      <label class="text-center text-danger">No featured image</label>
+                    <% } %>
+                  </div>
+
                   <div class="form-group">
                     <label for="title">Article Content</label>
                     <div class="mb-3">
