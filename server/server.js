@@ -5,7 +5,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
-// const fileupload = require('express-fileupload');
+const _ = require('lodash');
+const fileUpload = require('express-fileupload');
 
 const {mongoose} = require('./db/mongoose');
 
@@ -14,8 +15,11 @@ const {Article} = require('./models/article');
 const {Comment} = require('./models/comment');
 const {Category} = require('./models/category');
 
-const adminController = require('./controllers/admin');
-const publicController = require('./controllers/public');
+const AdminController = require('./controllers/admin');
+const ArticleController = require('./controllers/article');
+const AuthorController = require('./controllers/author');
+const CategoryController = require('./controllers/category');
+const PublicController = require('./controllers/public');
 
 const app = express();
 
@@ -33,20 +37,20 @@ app.use(
     }),
     flash(),
     express.static(path.join(__dirname, '/../public')),
-    // fileupload()
+    fileUpload()
 );
 
 app.set('view engine', 'ejs');
 
 // PUBLIC ROUTE
 app.get('/', async (req, res) => {
-    const categories = await adminController.listCategory(Category);
-    const articles = await adminController.listArticle(Article);
+    const categories = await AdminController.listModel(Category);
+    const articles = await AdminController.listModel(Article);
     res.render('blog/index', {publicPath, categories, articles });
 });
 
 app.get('/trending', async(req, res) => {
-    const articles = await publicController.getTrending(Article);
+    const articles = await PublicController.getTrending(Article);
     res.render('blog/trending', {publicPath, articles});
 });
 
@@ -56,92 +60,136 @@ app.get('/article/:title', (req, res) => {
 
 app.get('/category/:name', async(req, res) => {
     const name = req.params.name;
-    const articles = await publicController.getArticleInCategory(name, Category, Article);
+    const articles = await PublicController.getArticleInCategory(name, Category, Article);
     res.render('blog/category', {publicPath, articles});
 });
 
 // ADMIN ROUTE
 app.get('/admin/dashboard', async (req, res) => {
-    const overview = await adminController.getOverview(Article, Author, Category, Comment);
+    const overview = await AdminController.getOverview(Article, Author, Category, Comment);
     res.render('admin/dashboard', {publicPath, overview});
 });
 
 // Category
 app.get('/admin/category', async (req, res) => {
-    const categories = await adminController.listCategory(Category);
+    const categories = await AdminController.listModel(Category);
     res.render('admin/category', {
         publicPath, categories, 
         categoryCreated: req.flash('categoryCreated'),
-        categoryDeleted: req.flash('categoryDeleted')
+        categoryDeleted: req.flash('categoryDeleted'),
+        categoryUpdated: req.flash('categoryUpdated'),
     });
 });
 
 app.post('/admin/category', async (req, res) => {
-    await adminController.saveCategory(req, Category);
+    await CategoryController.saveCategory(req, Category);
     res.redirect('/admin/category');
 });
 
-app.get('/admin/category/:id/edit', (req, res) => {
-    res.render('admin/editcategory', {publicPath});
+app.get('/admin/category/:id/edit', async (req, res) => {
+const category = await AdminController.getModel(req, Category);
+    res.render('admin/editcategory', {publicPath, category});
+});
+
+app.post('/admin/category/:id/edit', async (req, res) => {
+    await CategoryController.updateCategory(_, req, Category);
+    res.redirect('/admin/category');
 });
 
 app.get('/admin/category/:id/delete', async (req, res) => {
-    await adminController.deleteCategory(req, Category);
+    await CategoryController.deleteCategory(req, Category);
     res.redirect('/admin/category');
 });
 
 // Article
 app.get('/admin/article', async (req, res) => {
-    const articles = await adminController.listArticle(Article);
+    const articles = await AdminController.listModel(Article);
     res.render('admin/article', {
         publicPath, articles, 
         articleCreated: req.flash('articleCreated'),
-        articleDeleted: req.flash('articleDeleted')
+        articleDeleted: req.flash('articleDeleted'),
+        articleUpdated: req.flash('articleUpdated')
     });
 });
 
 app.get('/admin/article/add', async (req, res) => {
-    const categories = await adminController.listCategory(Category);
+    const categories = await AdminController.listModel(Category);
     res.render('admin/addarticle', {publicPath, categories});
 });
 
 app.post('/admin/article/add', async (req, res) => {
-    await adminController.saveArticle(req, Article);
+    await ArticleController.saveArticle(req, Article);
     res.redirect('/admin/article');
 });
 
-app.get('/admin/article/:id/edit', (req, res) => {
-    res.render('admin/editarticle', {publicPath});
+app.get('/admin/article/:id/edit', async (req, res) => {
+    const categories = await AdminController.listModel(Category);
+    const article = await AdminController.getModel(req, Article);
+    res.render('admin/editarticle', {publicPath, article, categories});
+});
+
+app.post('/admin/article/:id/edit', async (req, res) => {
+    await ArticleController.updateArticle(_, req, Article);
+    res.redirect('/admin/article');
 });
 
 app.get('/admin/article/:id/delete', async (req, res) => {
-    await adminController.deleteArticle(req, Article);
+    await ArticleController.deleteArticle(req, Article);
     res.redirect('/admin/article');
 });
 
 // Author
 app.get('/admin/author', async (req, res) => {
-    const authors = await adminController.listAuthor(Author);
+    const authors = await AdminController.listModel(Author);
     res.render('admin/author', {
         publicPath, authors, 
         authorCreated: req.flash('authorCreated'),
-        authorDeleted: req.flash('authorDeleted') 
+        authorDeleted: req.flash('authorDeleted'), 
+        authorUpdated: req.flash('authorUpdated')
     });
 });
 
 app.post('/admin/author', async (req, res) => {
-    await adminController.saveAuthor(req, Author);
+    // await AuthorController.saveAuthor(req, Author);
+    try {
+        const image = req.files.image;
+        const modifiedName = image.name + new Date().getTime();
+        const path = __dirname + '/../../public/images/' + modifiedName;
+        image.mv(path);
+        const article = new Article({
+            _author: "5e486243a85cc91ac0b9650b",
+            _category: req.body.category,
+            title: req.body.title,
+            content: req.body.content,
+            image: modifiedName
+        });
+    
+        await article.save();
+        req.flash('articleCreated', "Your article has been created successfully");
+    } catch (error) {
+        req.flash('articleCreated', "There is problem creating a new article");
+        console.log(error);
+    }
+    
     res.redirect('/admin/author');
 });
 
-app.get('/admin/author/:id/edit', (req, res) => {
-    res.render('admin/editauthor', {publicPath});
+app.get('/admin/author/:id/edit', async (req, res) => {
+    const author = await AdminController.getModel(req, Author);
+    res.render('admin/editauthor', {publicPath, author});
+});
+
+app.post('/admin/author/:id/edit', async (req, res) => {
+    await AuthorController.updateAuthor(_, req, Author);
+    res.redirect('/admin/author');
 });
 
 app.get('/admin/author/:id/delete', async (req, res) => {
-    await adminController.deleteAuthor(req, Author);
+    await AuthorController.deleteAuthor(req, Author);
     res.redirect('/admin/author');
 });
+
+
 
 app.get('/login', (req, res) => {
     res.render('admin/login', {publicPath});

@@ -30,33 +30,33 @@
                 <h5 class="m-0">Update Author</h5>
               </div>
               <div class="card-body">
-                <form>
+                <form method="POST" action="">
                   <div class="form-group">
                     <label for="name">Author Name</label>
-                    <input type="text" class="form-control" id="name" placeholder="Salami Harun">
+                    <input type="text" class="form-control" id="name" name="name" value="<%= author.name %>">
                   </div>
 
                   <div class="form-group">
                     <label for="email">Author Email</label>
-                    <input type="email" class="form-control" id="email" placeholder="samlak@blogger.inc">
+                    <input type="email" class="form-control" id="email" name="email" value="<%= author.email %>">
                   </div>
 
                   <div class="form-group">
                     <label for="bio">Author Bio</label>
-                    <textarea class="form-control" id="bio" placeholder="Author biography"></textarea>
+                    <textarea class="form-control" id="bio" name="bio"><%= author.bio %></textarea>
                   </div>
 
                   <div class="form-group">
                     <label for="role">Author Role</label>
-                    <select class="custom-select" id="role">
-                      <option>Admin</option>
-                      <option>Author</option>
+                    <select class="custom-select" id="role" name="role">
+                      <option value="admin">Admin</option>
+                      <option value="author">Author</option>
                     </select>
                   </div>
 
                   <div class="form-group">
                     <label for="password">Author Password</label>
-                    <input type="password" class="form-control" id="password">
+                    <input type="password" class="form-control" id="password" name="password">
                   </div>
 
                   <div class="form-group">
@@ -67,12 +67,12 @@
                   <div class="form-group">
                     <label for="picture">Author Profile Picture</label>
                     <div class="custom-file">
-                      <input type="file" class="custom-file-input" id="customFile">
+                      <input type="file" class="custom-file-input" name="picture" id="customFile">
                       <label class="custom-file-label" for="customFile">Choose file</label>
                     </div>
                   </div>
 
-                  <button type="submit" class="btn btn-primary">Update author</button>
+                  <button type="submit" class="btn btn-primary">Update Author</button>
                 </form>
               </div>
             </div>
