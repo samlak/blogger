@@ -26,6 +26,7 @@ const listArticle = async (Article) => {
 
 const getArticle = async (title, Article) => {
     try{
+        encodeURIComponent(address)
         const articles = [];
         const article = await Article.find();
         article.forEach((art) => {

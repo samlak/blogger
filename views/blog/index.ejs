@@ -55,7 +55,7 @@
               <p class="card-text">
                 <%= articles[i].content %>
               </p>
-              <a href="/article/<%= articles[i].title %>" class="btn btn-primary btn-md">Read More
+              <a href="/article/<%= encodeURI(articles[i].title) %>" class="btn btn-primary btn-md">Read More
                 <i class="fas fa-play ml-2"></i>
               </a>
             </div>

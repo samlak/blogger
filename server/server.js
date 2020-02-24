@@ -47,6 +47,7 @@ app.set('view engine', 'ejs');
 app.get('/', async (req, res) => {
     const categories = await AdminController.listModel(Category);
     const articles = await AdminController.listModel(Article);
+    // encodeURIComponent(
     res.render('blog/index', {publicPath, categories, articles });
 });
 
@@ -162,7 +163,7 @@ app.get('/admin/author/:id/edit', async (req, res) => {
 });
 
 app.post('/admin/author/:id/edit', async (req, res) => {
-    await AuthorController.updateAuthor(_, req, Author);
+    await AuthorController.updateAuthor(_, fs, req, Author);
     res.redirect('/admin/author');
 });
 
