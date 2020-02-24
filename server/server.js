@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
 const _ = require('lodash');
 const fileUpload = require('express-fileupload');
+const fs = require('fs');
 
 const {mongoose} = require('./db/mongoose');
 
@@ -129,7 +130,7 @@ app.get('/admin/article/:id/edit', async (req, res) => {
 });
 
 app.post('/admin/article/:id/edit', async (req, res) => {
-    await ArticleController.updateArticle(_, req, Article);
+    await ArticleController.updateArticle(_, fs, req, Article);
     res.redirect('/admin/article');
 });
 

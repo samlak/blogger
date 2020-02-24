@@ -55,7 +55,7 @@
                   
                   <div class="form-group">
                     <% if(typeof article.image != 'undefined' && article.image != '') { %>
-                      <img src="<%= publicPath %>upload/<%= article.image %>" alt="Featured image" height="100px" width="500px" class="img-thumbnail text-center>
+                      <img src="<%= publicPath %>upload/<%= article.image %>" alt="Featured image" height="300px" width="300px" class="img-thumbnail">
                     <% } %>
                     <% if(typeof article.image == 'undefined' || article.image == '') { %>
                       <label class="text-center text-danger">No featured image</label>

@@ -34,21 +34,59 @@ const deleteArticle = async (req, Article) => {
     });
 };
 
-const updateArticle = async (_, req, Article) => {
-    const article = _.pick(req.body, ['_category', 'title', 'content']);
-    article._category = req.body.category;
-    article.title = req.body.title;
-    article.content = req.body.content;
+const updateArticle = async (_, fs, req, Article) => {
+    // const thisArticle = Article.findById(req.params.id)
 
-    await Article.findByIdAndUpdate(
+    // const article = _.pick(req.body, ['_category', 'title', 'content']);
+    // article._category = req.body.category;
+    // article.title = req.body.title;
+    // article.content = req.body.content;
+
+    // await Article.findByIdAndUpdate(
+    //         req.params.id,
+    //         {$set: article},
+    //         {useFindAndModify: false}
+    //     ).then((result) => {
+    //     req.flash('articleUpdated', "Your article has been updated successfully");
+    // }, (e) => {
+    //     req.flash('articleUpdated', "Error updating your article");
+    // });
+
+    
+    try {
+        const thisArticle = Article.findById(req.params.id);
+        
+        const image = req.files.image;
+        const modifiedName = new Date().getTime() + image.name ;
+        const path = __dirname + '/../../public/upload/' + modifiedName;
+
+        const article = _.pick(req.body, ['_category', 'title', 'content', 'image']);
+        article._category = req.body.category;
+        article.title = req.body.title;
+        article.content = req.body.content;
+
+        if(image){
+            if(typeof thisArticle.image != 'undefined' && thisArticle.image != ''){
+                fs.unlinkSync(__dirname + '/../../public/upload/' + thisArticle.image)
+            }
+            await image.mv(path);
+            article.image = modifiedName;
+        }
+
+        await Article.findByIdAndUpdate(
             req.params.id,
             {$set: article},
             {useFindAndModify: false}
         ).then((result) => {
-        req.flash('articleUpdated', "Your article has been updated successfully");
-    }, (e) => {
-        req.flash('articleUpdated', "Error updating your article");
-    });
+            req.flash('articleUpdated', "Your article has been updated successfully");
+        }, (e) => {
+            req.flash('articleUpdated', "Error updating your article");
+        });
+
+    } catch (error) {
+        req.flash('articleUpdated', "There is problem updating your article image");
+        console.log(error);
+    }
 };
 
 module.exports = {saveArticle, deleteArticle, updateArticle};
