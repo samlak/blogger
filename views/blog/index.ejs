@@ -41,8 +41,15 @@
 
             <!--Card image-->
             <div class="view overlay">
-              <img src="<%= publicPath %>upload/<%= articles[i].image %>" class="card-img-top" alt="">
-              <a href="/article/<%= articles[i].title %>">
+
+              <% if(articles[i].image){ %>
+                <img src="<%= publicPath %>upload/<%= articles[i].image %>" class="card-img-top" height="200px" alt="Featured Image">
+              <% } %>
+          
+              <% if(!articles[i].image){ %>
+                <img src="<%= publicPath %>upload/default/image.png"  class="card-img-top" height="200px" alt="Featured Image">
+              <% } %>
+              <a href="/article/<%= articles[i].slug %>">
                 <div class="mask rgba-white-slight"></div>
               </a>
             </div>
@@ -53,9 +60,9 @@
               <h4 class="card-title"><%= articles[i].title %></h4>
               <!--Text-->
               <p class="card-text">
-                <%= articles[i].content %>
+                <%- articles[i].content %>
               </p>
-              <a href="/article/<%= encodeURI(articles[i].title) %>" class="btn btn-primary btn-md">Read More
+              <a href="/article/<%= articles[i].slug %>" class="btn btn-primary btn-md">Read More
                 <i class="fas fa-play ml-2"></i>
               </a>
             </div>

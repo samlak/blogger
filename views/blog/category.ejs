@@ -30,8 +30,15 @@
           <div class="col-lg-5 col-xl-4 mb-4">
             <!--Featured image-->
             <div class="view overlay rounded z-depth-1">
-              <img src="<%= publicPath %>upload/<%= articles[0][i].image %>" class="img-fluid" alt="">
-              <a href="/article/<%= articles[0][i].title %>">
+              <% if(articles[0][i].image){ %>
+                <img src="<%= publicPath %>upload/<%= articles[0][i].image %>" height="200px" width="100%" alt="Featured Image">
+              <% } %>
+          
+              <% if(!articles[0][i].image){ %>
+                <img src="<%= publicPath %>upload/default/image.png" height="200px" width="100%" alt="Featured Image">
+              <% } %>
+
+              <a href="/article/<%= articles[0][i].slug %>">
                 <div class="mask rgba-white-slight"></div>
               </a>
             </div>
@@ -44,7 +51,7 @@
               <strong><%= articles[0][i].title %></strong>
             </h3>
             <p class="grey-text"> <%= articles[0][i].content %></p>
-            <a href="/article/<%= articles[0][i].title %>" class="btn btn-primary btn-md">Read More</a>
+            <a href="/article/<%= articles[0][i].slug %>" class="btn btn-primary btn-md">Read More</a>
           </div>
           <!--Grid column-->
 

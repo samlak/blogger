@@ -9,11 +9,26 @@
       <!--Grid column-->
       <div class="col-md-8 mb-4">
 
-        <!--Featured Image-->
+        <!--Card-->
         <div class="card mb-4 wow fadeIn">
 
-          <img src="<%= publicPath %>img/sample.jpg" class="img-fluid" alt="">
+          <!--Card content-->
+          <div class="card-body text-center">
+            <h1 class="h2 my-4 font-weight-bold"><%= article.title %></h1>
+          </div>
 
+        </div>
+        <!--/.Card-->
+
+        <!--Featured Image-->
+        <div class="card mb-4 wow fadeIn">
+          <% if(article.image){ %>
+            <img src="<%= publicPath %>upload/<%= article.image %>" class="image-fluid" height="300px" alt="Featured Image">
+          <% } %>
+          
+          <% if(!article.image){ %>
+            <img src="<%= publicPath %>upload/default/image.png" class="image-fluid" height="300px" alt="Featured Image">
+          <% } %>
         </div>
         <!--/.Featured Image-->
 
@@ -21,37 +36,8 @@
         <div class="card mb-4 wow fadeIn">
 
           <!--Card content-->
-          <div class="card-body text-center">
-            <h1 class="h2 my-4 font-weight-bold">This is the first shit that does not have a meaning</h1>
-          </div>
-
-        </div>
-        <!--/.Card-->
-
-        <!--Card-->
-        <div class="card mb-4 wow fadeIn">
-
-          <!--Card content-->
           <div class="card-body">
-
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, ut rerum deserunt corporis
-              ducimus at, deleniti ea alias dolor reprehenderit sit vel. Incidunt id illum doloribus,
-              consequuntur maiores sed eligendi.
-              
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, ut rerum deserunt corporis
-              ducimus at, deleniti ea alias dolor reprehenderit sit vel. Incidunt id illum doloribus,
-              consequuntur maiores sed eligendi.
-
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, ut rerum deserunt corporis
-              ducimus at, deleniti ea alias dolor reprehenderit sit vel. Incidunt id illum doloribus,
-              consequuntur maiores sed eligendi.
-
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, ut rerum deserunt corporis
-              ducimus at, deleniti ea alias dolor reprehenderit sit vel. Incidunt id illum doloribus,
-              consequuntur maiores sed eligendi.
-            </p>
-
+            <%- article.content %>
           </div>
 
         </div>

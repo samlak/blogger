@@ -45,9 +45,8 @@ app.set('view engine', 'ejs');
 
 // PUBLIC ROUTE
 app.get('/', async (req, res) => {
-    const categories = await AdminController.listModel(Category);
-    const articles = await AdminController.listModel(Article);
-    // encodeURIComponent(
+    let categories = await AdminController.listModel(Category);
+    let articles = await AdminController.listModel(Article);
     res.render('blog/index', {publicPath, categories, articles });
 });
 
@@ -56,8 +55,9 @@ app.get('/trending', async(req, res) => {
     res.render('blog/trending', {publicPath, articles});
 });
 
-app.get('/article/:title', (req, res) => {
-    res.render('blog/article', {publicPath});
+app.get('/article/:slug', async (req, res) => {
+    const article = await PublicController.getArticle(req, Article);
+    res.render('blog/article', {publicPath, article});
 });
 
 app.get('/category/:name', async(req, res) => {

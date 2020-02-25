@@ -1,19 +1,30 @@
 const saveArticle = async (req, Article) => {
     try {
-        const image = req.files.image;
-        const modifiedName = new Date().getTime() + image.name ;
-        const path = __dirname + '/../../public/upload/' + modifiedName;
+        if(req.files){
+            var image = req.files.image;
+            var modifiedName = new Date().getTime() + image.name ;
+            var path = __dirname + '/../../public/upload/' + modifiedName;
+            
+            await image.mv(path);
+
+            // var imageName = req.files ? modifiedName : '';
         
-        await image.mv(path);
-        
-        const article = new Article({
-            _author: "5e4da886e4f93d18a024e699",
-            _category: req.body.category,
-            title: req.body.title,
-            content: req.body.content,
-            image: modifiedName
-        });
-    
+            var article = new Article({
+                _author: "5e4da886e4f93d18a024e699",
+                _category: req.body.category,
+                title: req.body.title,
+                content: req.body.content,
+                image: modifiedName
+            });
+        }else{
+            var article = new Article({
+                _author: "5e4da886e4f93d18a024e699",
+                _category: req.body.category,
+                title: req.body.title,
+                content: req.body.content,
+            });
+        }
+
         await article.save().then((result) => {
             req.flash('articleCreated', "Your article has been created successfully");
         }, (e) => {
