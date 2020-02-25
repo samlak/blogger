@@ -178,6 +178,10 @@ app.get('/login', (req, res) => {
     res.render('admin/login', {publicPath});
 });
 
+app.get('/404', (req, res) => {
+    res.render('admin/404', {publicPath});
+});
+
 app.listen(port, () => {
     console.log(`Listening to port ${port}`)
 })
