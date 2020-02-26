@@ -13,7 +13,7 @@ const listCategory = async (Category) => {
 
 const getArticle = async (req, Article) => {
     try{
-        const article = await Article.findOne({slug: req.params.slug});
+        const article = await Article.findOne({slug: req.params.slug}).populate('author');
         return article;
     }catch(error) {
         return error;

@@ -1,17 +1,23 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 const slug = require('mongoose-slug-updater');
+
 mongoose.plugin(slug);
 
 var ArticleSchema = new mongoose.Schema({
-    _author: {
+    author: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Author'
+    },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
         required: true
     },
-    _category: {
+    comments: [{
         type: mongoose.Schema.Types.ObjectId,
-        required: true
-    },
+        ref: 'Comment',
+    }],
     title: {
         type: String,
         required: true,

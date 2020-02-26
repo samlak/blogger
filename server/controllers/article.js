@@ -6,20 +6,18 @@ const saveArticle = async (req, Article) => {
             var path = __dirname + '/../../public/upload/' + modifiedName;
             
             await image.mv(path);
-
-            // var imageName = req.files ? modifiedName : '';
         
             var article = new Article({
-                _author: "5e4da886e4f93d18a024e699",
-                _category: req.body.category,
+                author: "5e4da886e4f93d18a024e699",
+                category: req.body.category,
                 title: req.body.title,
                 content: req.body.content,
                 image: modifiedName
             });
         }else{
             var article = new Article({
-                _author: "5e4da886e4f93d18a024e699",
-                _category: req.body.category,
+                author: "5e4da886e4f93d18a024e699",
+                category: req.body.category,
                 title: req.body.title,
                 content: req.body.content,
             });
@@ -50,8 +48,8 @@ const updateArticle = async (_, fs, req, Article) => {
     try {
         const thisArticle = await Article.findById(req.params.id);
 
-        const article = _.pick(req.body, ['_category', 'title', 'content', 'image']);
-        article._category = req.body.category;
+        const article = _.pick(req.body, ['category', 'title', 'content', 'image']);
+        article.category = req.body.category;
         article.title = req.body.title;
         article.content = req.body.content;
 

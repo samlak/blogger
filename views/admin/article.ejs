@@ -74,7 +74,7 @@
                     
                     <% for(var i = 0; i < articles.length; i++) { %>
                       <li class="list-group-item form-inline">
-                        <a href="/article/<%= articles[i]._id %>" class="card-link"><%= articles[i].title %></a>
+                        <a href="/article/<%= articles[i].slug %>" class="card-link"><%= articles[i].title %></a>
                         <a href="/admin/article/<%= articles[i]._id %>/edit" class="btn btn-secondary btn-sm ml-1">
                           <i class="nav-icon fas fa-pencil-alt"></i>
                         </a>

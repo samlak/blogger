@@ -57,6 +57,7 @@ app.get('/trending', async(req, res) => {
 
 app.get('/article/:slug', async (req, res) => {
     const article = await PublicController.getArticle(req, Article);
+    console.log(article);
     res.render('blog/article', {publicPath, article});
 });
 

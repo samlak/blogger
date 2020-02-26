@@ -5,6 +5,7 @@ const validator = require('validator');
 var CommentSchema = new mongoose.Schema({
     _article: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Article',
         required: true
     },
     name: {
