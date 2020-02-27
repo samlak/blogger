@@ -26,7 +26,7 @@ const getArticle = async (req, Article) => {
 const getArticleInCategory = async (name, Category, Article) => {
     try{
         const category = await Category.findOne({name});
-        const article = await Article.find({_category: category.id});
+        const article = await Article.find({category: category.id});
         return [article, category];
     }catch(error) {
         return error;

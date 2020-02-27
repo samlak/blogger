@@ -38,7 +38,7 @@ app.use(
     }),
     flash(),
     express.static(path.join(__dirname, '/../public')),
-    fileUpload()
+    fileUpload(),
 );
 
 app.set('view engine', 'ejs');
@@ -57,10 +57,14 @@ app.get('/trending', async(req, res) => {
 
 app.get('/article/:slug', async (req, res) => {
     const article = await PublicController.getArticle(req, Article);
-    res.render('blog/article', {
-        publicPath, article, 
-        commentPosted: req.flash('commentPosted')
-    });
+    if (article){
+        res.render('blog/article', {
+            publicPath, article, 
+            commentPosted: req.flash('commentPosted')
+        });
+    }else{
+        res.redirect('/404');
+    }
 });
 
 app.post('/article/:slug', async (req, res) => {
@@ -71,7 +75,11 @@ app.post('/article/:slug', async (req, res) => {
 app.get('/category/:name', async(req, res) => {
     const name = req.params.name;
     const articles = await PublicController.getArticleInCategory(name, Category, Article);
-    res.render('blog/category', {publicPath, articles});
+    if (articles[0]){
+        res.render('blog/category', {publicPath, articles});
+    }else{
+        res.redirect('/404');
+    }
 });
 
 // ADMIN ROUTE
@@ -97,8 +105,12 @@ app.post('/admin/category', async (req, res) => {
 });
 
 app.get('/admin/category/:id/edit', async (req, res) => {
-const category = await AdminController.getModel(req, Category);
-    res.render('admin/editcategory', {publicPath, category});
+    const category = await AdminController.getModel(req, Category);
+    if(category.name === "CastError"){
+        res.redirect('/404');
+    }else{
+        res.render('admin/editcategory', {publicPath, category});
+    }
 });
 
 app.post('/admin/category/:id/edit', async (req, res) => {
@@ -135,7 +147,11 @@ app.post('/admin/article/add', async (req, res) => {
 app.get('/admin/article/:id/edit', async (req, res) => {
     const categories = await AdminController.listModel(Category);
     const article = await AdminController.getModel(req, Article);
-    res.render('admin/editarticle', {publicPath, article, categories});
+    if(article.name === "CastError"){
+        res.redirect('/404');
+    }else{
+        res.render('admin/editarticle', {publicPath, article, categories});
+    }
 });
 
 app.post('/admin/article/:id/edit', async (req, res) => {
@@ -167,7 +183,11 @@ app.post('/admin/author', async (req, res) => {
 
 app.get('/admin/author/:id/edit', async (req, res) => {
     const author = await AdminController.getModel(req, Author);
-    res.render('admin/editauthor', {publicPath, author});
+    if(category.name === "CastError"){
+        res.redirect('/404');
+    }else{
+        res.render('admin/editauthor', {publicPath, author});
+    }
 });
 
 app.post('/admin/author/:id/edit', async (req, res) => {
@@ -181,7 +201,6 @@ app.get('/admin/author/:id/delete', async (req, res) => {
 });
 
 
-
 app.get('/login', (req, res) => {
     res.render('admin/login', {publicPath});
 });
@@ -189,6 +208,27 @@ app.get('/login', (req, res) => {
 app.get('/404', (req, res) => {
     res.render('admin/404', {publicPath});
 });
+
+// app.get('/500', (req, res) => {
+//     res.render('admin/500', {publicPath});
+// });
+
+
+app.use(
+    function(req, res, next){
+        res.status(404);
+        res.render('admin/404', {publicPath, url: req.url});
+        return;
+    }
+);
+
+app.use(
+    function(req, res, next){
+        res.status(500);
+        res.render('admin/500', {publicPath});
+        return;
+    }
+);
 
 app.listen(port, () => {
     console.log(`Listening to port ${port}`)
