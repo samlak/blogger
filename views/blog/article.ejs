@@ -9,14 +9,33 @@
       <!--Grid column-->
       <div class="col-md-8 mb-4">
 
+
+        <% if (commentPosted.length > 0) { %>
+          <div class="mx-5 col-lg-11 alert alert-warning alert-dismissible fade show" role="alert">
+            <%= commentPosted %>
+
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        <% } %>
+
         <!--Card-->
         <div class="card mb-4 wow fadeIn">
-
           <!--Card content-->
           <div class="card-body text-center">
             <h1 class="h2 my-4 font-weight-bold"><%= article.title %></h1>
+            <div class="text-center">
+              <i class="fas fa-user"></i> 
+              <%= article.author.name %>
+              <i class="fas fa-comment"></i> 
+              <%= article.comments.length %> comment(s)
+              <i class="fas fa-eye"></i> 
+              5 view(s)
+              <i class="fas fa-clock"></i> 
+              Created
+            </div>
           </div>
-
         </div>
         <!--/.Card-->
 
@@ -54,16 +73,24 @@
           <div class="card-body">
 
             <div class="media d-block d-md-flex mt-3">
-              <img class="d-flex mb-3 mx-auto z-depth-1" src="<%= publicPath %>img/sample.jpg"
+              
+            <% if(article.author.picture){ %>
+
+              <img class="d-flex mb-3 mx-auto z-depth-1" src="<%= publicPath %>upload/<%= article.author.picture %>"
                 alt="Generic placeholder image" style="width: 100px;">
+            <% } %>
+            
+            <% if(!article.author.picture){ %>
+              <img class="d-flex mb-3 mx-auto z-depth-1" src="<%= publicPath %>upload/default/avatar.png"
+                alt="Generic placeholder image" style="width: 100px;">
+            <% } %>
+
+
               <div class="media-body text-center text-md-left ml-md-3 ml-0">
-                <h5 class="mt-0 font-weight-bold">Caroline Horwitz
+                <h5 class="mt-0 font-weight-bold">
+                  <%= article.author.name %>
                 </h5>
-                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum
-                deleniti atque corrupti
-                quos dolores et quas molestias excepturi sint occaecati cupiditate non provident,
-                similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum
-                fuga.
+                <%= article.author.bio %>
               </div>
             </div>
 
@@ -74,69 +101,32 @@
 
         <!--Comments-->
         <div class="card card-comments mb-3 wow fadeIn">
-          <div class="card-header font-weight-bold">3 comments</div>
+          <div class="card-header font-weight-bold">
+            <%= article.comments.length %> comments
+          </div>
           <div class="card-body">
-
-            <div class="media d-block d-md-flex mt-4">
-              <img class="d-flex mb-3 mx-auto " src="<%= publicPath %>img/sample.jpg" alt="Generic placeholder image">
-              <div class="media-body text-center text-md-left ml-md-3 ml-0">
-                <h5 class="mt-0 font-weight-bold">Miley Steward
-                  <a href="" class="pull-right">
-                    <i class="fas fa-reply"></i>
-                  </a>
-                </h5>
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-                <div class="media d-block d-md-flex mt-3">
-                  <img class="d-flex mb-3 mx-auto " src="<%= publicPath %>img/sample.jpg"
-                    alt="Generic placeholder image">
+            <% if(article.comments.length > 0) { %>
+              <% for(var i = 0; i < article.comments.length; i++) { %>
+                <div class="media d-block d-md-flex mt-4">
+                  <img class="d-flex mb-3 mx-auto " src="<%= publicPath %>upload/default/avatar.png" alt="Generic placeholder image">
                   <div class="media-body text-center text-md-left ml-md-3 ml-0">
-                    <h5 class="mt-0 font-weight-bold">Tommy Smith
+                    <h5 class="mt-0 font-weight-bold"><%= article.comments[i].name %> 
+                      <span class="h6">
+                        <i class="fas fa-clock"></i>
+                        5 mins ago
+                      </span>
                       <a href="" class="pull-right">
                         <i class="fas fa-reply"></i>
                       </a>
                     </h5>
-                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-                    laudantium, totam rem aperiam, eaque
-                    ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta
-                    sunt explicabo.
+                    <%= article.comments[i].comment %>
                   </div>
                 </div>
-
-                <div class="media d-block d-md-flex mt-3">
-                  <img class="d-flex mb-3 mx-auto " src="<%= publicPath %>img/sample.jpg"
-                    alt="Generic placeholder image">
-                  <div class="media-body text-center text-md-left ml-md-3 ml-0">
-                    <h5 class="mt-0 font-weight-bold">Sylvester the Cat
-                      <a href="" class="pull-right">
-                        <i class="fas fa-reply"></i>
-                      </a>
-                    </h5>
-                    Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
-                    sed quia non numquam eius modi
-                    tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="media d-block d-md-flex mt-3">
-              <img class="d-flex mb-3 mx-auto " src="<%= publicPath %>img/sample.jpg" alt="Generic placeholder image">
-              <div class="media-body text-center text-md-left ml-md-3 ml-0">
-                <h5 class="mt-0 font-weight-bold">Caroline Horwitz
-                  <a href="" class="pull-right">
-                    <i class="fas fa-reply"></i>
-                  </a>
-                </h5>
-                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum
-                deleniti atque corrupti
-                quos dolores et quas molestias excepturi sint occaecati cupiditate non provident,
-                similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum
-                fuga.
-              </div>
-            </div>
-
+              <% } %>
+            <% } %>
+            <% if(article.comments.length == 0) { %>
+              <div class="text-danger text-center"><strong>No comment for this article yet. You can make your own contribution below </strong></div>
+            <% } %>
           </div>
         </div>
         <!--/.Comments-->
@@ -147,23 +137,23 @@
           <div class="card-body">
 
             <!-- Default form reply -->
-            <form>
+            <form method="POST" action="">
 
               <!-- Comment -->
               <div class="form-group">
-                <label for="replyFormComment">Your comment</label>
-                <textarea class="form-control" id="replyFormComment" rows="5"></textarea>
+                <label for="comment">Your comment</label>
+                <textarea class="form-control" id="comment" name="comment" rows="5"></textarea>
               </div>
 
               <!-- Name -->
-              <label for="replyFormName">Your name</label>
-              <input type="email" id="replyFormName" class="form-control">
+              <label for="name">Your name</label>
+              <input type="text" id="name" name="name" class="form-control">
 
               <br>
 
               <!-- Email -->
-              <label for="replyFormEmail">Your e-mail</label>
-              <input type="email" id="replyFormEmail" class="form-control">
+              <label for="email">Your e-mail</label>
+              <input type="email" id="email" name="email" class="form-control">
 
 
               <div class="text-center mt-4">

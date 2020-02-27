@@ -3,11 +3,6 @@ const _ = require('lodash');
 const validator = require('validator');
 
 var CommentSchema = new mongoose.Schema({
-    _article: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Article',
-        required: true
-    },
     name: {
         type: String,
         required: true,
@@ -17,17 +12,26 @@ var CommentSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        unique: true,
         validate: {
             validator: validator.isEmail,
             message: '{VALUE} is not valid email'
-        }
+        },
+        unique: false
     },
     comment: {
         type: String,
         required: true,
         trim: true
+    },
+    created: {
+        type: Date
     }
+});
+
+CommentSchema.pre('save', function (next) {
+    var comment = this;
+    comment.created = new Date();
+    next();
 });
 
 var Comment = mongoose.model('Comment', CommentSchema);

@@ -12,7 +12,6 @@ var ArticleSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
-        required: true
     },
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -37,7 +36,16 @@ var ArticleSchema = new mongoose.Schema({
         type: String,
         required: false,
         trim: true
+    },
+    created: {
+        type: Date
     }
+});
+
+ArticleSchema.pre('save', function (next) {
+    var article = this;
+    article.created = new Date();
+    next();
 });
 
 var Article = mongoose.model('Article', ArticleSchema);

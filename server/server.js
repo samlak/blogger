@@ -57,8 +57,15 @@ app.get('/trending', async(req, res) => {
 
 app.get('/article/:slug', async (req, res) => {
     const article = await PublicController.getArticle(req, Article);
-    console.log(article);
-    res.render('blog/article', {publicPath, article});
+    res.render('blog/article', {
+        publicPath, article, 
+        commentPosted: req.flash('commentPosted')
+    });
+});
+
+app.post('/article/:slug', async (req, res) => {
+    await PublicController.saveComment(req, Comment, Article);
+    res.redirect('/article/'+req.params.slug);
 });
 
 app.get('/category/:name', async(req, res) => {
