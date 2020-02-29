@@ -33,6 +33,16 @@ const getArticleInCategory = async (name, Category, Article) => {
     };  
 };
 
+const getRelatedArticle = async (req, Article) => {
+    try{
+        const article = await Article.findOne({slug: req.params.slug});
+        const relatedArticles = await Article.find({category: article.category});
+        return relatedArticles;
+    }catch(error) {
+        return error;
+    };  
+};
+
 const getTrending = async (Article) => {
     try{
         const article = await Article.find();
@@ -63,4 +73,4 @@ const saveComment = async (req, Comment, Article) => {
     }
 }
 
-module.exports = {listCategory, getArticleInCategory, getTrending, getArticle, saveComment}
+module.exports = {listCategory, getArticleInCategory, getTrending, getArticle, saveComment, getRelatedArticle}

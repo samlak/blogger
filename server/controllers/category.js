@@ -11,12 +11,37 @@ const saveCategory = async (req, Category) => {
     });
 };
 
-const deleteCategory = async (req, Category) => {
-    await Category.findByIdAndRemove(req.params.id).then((result) => {
-        req.flash('categoryDeleted', "Your category has been deleted successfully");
-    }, (erro) => {
+const deleteCategory = async (req, Category, Article) => {
+    await Category.findById(req.params.id).then( async (result) => {
+        const generalId = '5e59d6621c4a961bd4cd92ba';
+        if(result._id == generalId){
+            req.flash('categoryDeleted', "You can not delete this category");
+        }else{
+            await Article.findAndUpdate(
+                {category: result._id},
+                {$set: {article: generalId}},
+                {useFindAndModify: false}
+            ).then((result) => {
+                console.log(result);
+            }, (erro) => {
+                req.flash('categoryDeleted', "Error deleting your category");
+            });
+
+            await Category.findById(req.params.id).then((result) => {
+                req.flash('categoryDeleted', "Your category has been deleted successfully");
+            }, (erro) => {
+                req.flash('categoryDeleted', "Error deleting your category");
+            });
+        }
+    }, (error) => {
         req.flash('categoryDeleted', "Error deleting your category");
     });
+
+//     await Category.findByIdAndRemove(req.params.id).then((result) => {
+//         req.flash('categoryDeleted', "Your category has been deleted successfully");
+//     }, (erro) => {
+//         req.flash('categoryDeleted', "Error deleting your category");
+//     });
 };
 
 const updateCategory = async (_, req, Category) => {

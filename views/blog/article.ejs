@@ -182,34 +182,30 @@
           <!--Card content-->
           <div class="card-body">
 
-            <ul class="list-unstyled">
-              <li class="media">
-                <img class="d-flex mr-3" width="50%" src="<%= publicPath %>img/sample.jpg" alt="Generic placeholder image">
-                <div class="media-body">
-                  <a href="">
-                    <h5 class="mt-0 mb-1 font-weight-bold">List-based media object</h5>
-                  </a>
-                  Cras sit amet nibh libero, in gravida nulla (...)
-                </div>
-              </li>
-              <li class="media my-4">
-                <img class="d-flex mr-3" width="50%" src="<%= publicPath %>img/sample.jpg" alt="An image">
-                <div class="media-body">
-                  <a href="">
-                    <h5 class="mt-0 mb-1 font-weight-bold">List-based media object</h5>
-                  </a>
-                  Cras sit amet nibh libero, in gravida nulla (...)
-                </div>
-              </li>
-              <li class="media">
-                <img class="d-flex mr-3" width="50%" src="<%= publicPath %>img/sample.jpg" alt="Generic placeholder image">
-                <div class="media-body">
-                  <a href="">
-                    <h5 class="mt-0 mb-1 font-weight-bold">List-based media object</h5>
-                  </a>
-                  Cras sit amet nibh libero, in gravida nulla (...)
-                </div>
-              </li>
+            <ul class="list-unstyled">         
+            <% if(relatedArticles.length > 0) { %>
+              <% for(var i = 0; i < relatedArticles.length; i++) { %>
+                <li class="media mb-4">
+                  <% if(relatedArticles[i].image){ %>
+                    <img class="d-flex mr-3" width="50%" src="<%= publicPath %>upload/<%= relatedArticles[i].image %>" alt="Featured Image">
+                  <% } %>
+                  
+                  <% if(!relatedArticles[i].image){ %>
+                    <img class="d-flex mr-3" width="50%" src="<%= publicPath %>upload/default/image.png" alt="Featured Image">
+                  <% } %>
+                  <div class="media-body">
+                    <a href="<%= relatedArticles[i].slug %>">
+                      <h5 class="mt-0 mb-1 font-weight-bold"><%= relatedArticles[i].title %></h5>
+                    </a>
+                    <%= relatedArticles[i].title %>
+                  </div>
+                </li>
+              <% } %>
+            <% } %>
+            <% if(relatedArticles.length > 0) { %>
+              <div class="text-info text-center"><strong>No related article for this post</strong></div>
+            <% } %>
+
             </ul>
 
           </div>

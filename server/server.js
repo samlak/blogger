@@ -57,9 +57,10 @@ app.get('/trending', async(req, res) => {
 
 app.get('/article/:slug', async (req, res) => {
     const article = await PublicController.getArticle(req, Article);
+    const relatedArticles = await PublicController.getRelatedArticle(req, Article);
     if (article){
         res.render('blog/article', {
-            publicPath, article, 
+            publicPath, article, relatedArticles,
             commentPosted: req.flash('commentPosted')
         });
     }else{
@@ -119,7 +120,7 @@ app.post('/admin/category/:id/edit', async (req, res) => {
 });
 
 app.get('/admin/category/:id/delete', async (req, res) => {
-    await CategoryController.deleteCategory(req, Category);
+    await CategoryController.deleteCategory(req, Category, Article);
     res.redirect('/admin/category');
 });
 
@@ -183,7 +184,7 @@ app.post('/admin/author', async (req, res) => {
 
 app.get('/admin/author/:id/edit', async (req, res) => {
     const author = await AdminController.getModel(req, Author);
-    if(category.name === "CastError"){
+    if(author.name === "CastError"){
         res.redirect('/404');
     }else{
         res.render('admin/editauthor', {publicPath, author});
@@ -219,15 +220,7 @@ app.use(
         res.status(404);
         res.render('admin/404', {publicPath, url: req.url});
         return;
-    }
-);
-
-app.use(
-    function(req, res, next){
-        res.status(500);
-        res.render('admin/500', {publicPath});
-        return;
-    }
+    },
 );
 
 app.listen(port, () => {
