@@ -1,20 +1,31 @@
 const saveAuthor = async (req, Author) => {
     try {
-        const image = req.files.picture;
-        const modifiedName = new Date().getTime() + image.name ;
-        const path = __dirname + '/../../public/upload/' + modifiedName;
-        
-        await image.mv(path);
-        
-        const author = new Author({
-            name: req.body.name,
-            email: req.body.email,
-            bio: req.body.bio,
-            role: req.body.role,
-            password: req.body.password,
-            picture: modifiedName
-        });
-    
+        if(req.files){
+            var image = req.files.picture;
+            var modifiedName = new Date().getTime() + image.name ;
+            var path = __dirname + '/../../public/upload/' + modifiedName;
+            
+            await image.mv(path);
+            
+            var author = new Author({
+                name: req.body.name,
+                email: req.body.email,
+                bio: req.body.bio,
+                role: req.body.role,
+                password: req.body.password,
+                picture: modifiedName
+            });
+        }else{
+            var author = new Author({
+                name: req.body.name,
+                email: req.body.email,
+                bio: req.body.bio,
+                role: req.body.role,
+                password: req.body.password,
+                picture: modifiedName
+            });
+        }
+
         await author.save().then((result) => {
             req.flash('authorCreated', "Author created successfully");
         }, (e) => {
@@ -27,12 +38,39 @@ const saveAuthor = async (req, Author) => {
     }
 };
 
-const deleteAuthor = async (req, Author) => {
-    await Author.findByIdAndRemove(req.params.id).then((result) => {
-        req.flash('authorDeleted', "Author deleted successfully");
-    }, (e) => {
+const deleteAuthor = async (req, fs, Author, Article) => {
+    await Author.findById(req.params.id).then( async (author) => {
+        const editorId = '5e59d76f1c4a961bd4cd92bb';
+        if(author._id == editorId){
+            req.flash('authorDeleted', "You can not delete this author");
+        }else{
+            const articles = await Article.find({author: author._id});
+            articles.forEach(async (article) => {
+                await Article.findByIdAndUpdate(
+                    article._id, 
+                    {$set: {author: editorId}},
+                    {useFindAndModify: false}
+                ).then((result) => {
+                }, (error) => {
+                    req.flash('authorDeleted', "Error encounter when updating associated article");
+                });
+            });
+            
+            if(typeof author.picture != 'undefined' && author.picture != ''){
+                fs.unlinkSync(__dirname + '/../../public/upload/' + author.picture);
+            }
+
+            await Author.findByIdAndRemove(req.params.id, {useFindAndModify: false}).then((result) => {
+                req.flash('authorDeleted', "Author deleted successfully");
+            }, (e) => {
+                req.flash('authorDeleted', "Error deleting your author");
+            });
+
+        }
+    }, (error) => {
         req.flash('authorDeleted', "Error deleting your author");
     });
+
 };
 
 const updateAuthor = async (_, fs, req, Author) => {

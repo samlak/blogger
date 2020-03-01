@@ -35,12 +35,28 @@ const saveArticle = async (req, Article) => {
     }
 };
 
-const deleteArticle = async (req, Article) => {
-    await Article.findByIdAndRemove(req.params.id).then((result) => {
-        req.flash('articleDeleted', "Your article has been deleted successfully");
-    }, (e) => {
+const deleteArticle = async (req, fs, Article, Comment) => {
+    try{
+        const article = await Article.findById(req.params.id);
+
+        article.comments.forEach( async (comment) => {
+            await Comment.findByIdAndRemove(comment, {useFindAndModify: false}).then((result) => {
+            }, (e) => {
+                req.flash('articleDeleted', "Error deleting the associted comment for the article");
+            });
+        });
+
+        await Article.findByIdAndRemove(req.params.id, {useFindAndModify: false}).then((article) => {
+            if(typeof article.image != 'undefined' && article.image != ''){
+                fs.unlinkSync(__dirname + '/../../public/upload/' + article.image);
+            }
+            req.flash('articleDeleted', "Your article has been deleted successfully");
+        }, (e) => {
+            req.flash('articleDeleted', "Error deleting your article");
+        });
+    }catch(error){
         req.flash('articleDeleted', "Error deleting your article");
-    });
+    }
 };
 
 const updateArticle = async (_, fs, req, Article) => {

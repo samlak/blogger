@@ -34,7 +34,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <!-- SEARCH FORM -->
-      <form class="form-inline ml-3">
+      <form class="form-inline ml-3 mr-2">
         <div class="input-group input-group-sm">
           <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
           <div class="input-group-append">
@@ -44,6 +44,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
           </div>
         </div>
       </form>
+      <li>
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <i class="fa fa-fw fa-power-off"></i> Log Out
+        </a>
+        <form id="logout-form" action="/logout" method="POST" style="display: none;">
+          <!-- <input type="hidden" name="_token" value="jDSJMXuqoNSfoPFIDhfCdUvuEnmmFVXT1Z3lysLf"> -->
+        </form>
+      </li>
     </ul>
   </nav>
   <!-- /.navbar -->

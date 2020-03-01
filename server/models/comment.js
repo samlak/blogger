@@ -11,7 +11,8 @@ var CommentSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        trim: true,
+        trim: true, 
+        lowercase: true,
         validate: {
             validator: validator.isEmail,
             message: '{VALUE} is not valid email'

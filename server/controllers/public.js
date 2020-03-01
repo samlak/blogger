@@ -1,11 +1,7 @@
 const listCategory = async (Category) => {
     try{
-        const categories = [];
         const category = await Category.find();
-        category.forEach((cat) => {
-            categories.push(cat);
-        });
-        return categories;
+        return category;
     }catch(error) {
         return error;
     };  

@@ -45,7 +45,8 @@ app.set('view engine', 'ejs');
 
 // PUBLIC ROUTE
 app.get('/', async (req, res) => {
-    let categories = await AdminController.listModel(Category);
+    let categories = await PublicController.listCategory(Category);
+    // let categories = await AdminController.listModel(Category);
     let articles = await AdminController.listModel(Article);
     res.render('blog/index', {publicPath, categories, articles });
 });
@@ -64,7 +65,7 @@ app.get('/article/:slug', async (req, res) => {
             commentPosted: req.flash('commentPosted')
         });
     }else{
-        res.redirect('/404');
+        res.render('admin/404', {publicPath, url: req.url});
     }
 });
 
@@ -79,7 +80,8 @@ app.get('/category/:name', async(req, res) => {
     if (articles[0]){
         res.render('blog/category', {publicPath, articles});
     }else{
-        res.redirect('/404');
+        res.render('admin/404', {publicPath, url: req.url});
+        res.render('admin/404', {publicPath, url: req.url});
     }
 });
 
@@ -108,7 +110,7 @@ app.post('/admin/category', async (req, res) => {
 app.get('/admin/category/:id/edit', async (req, res) => {
     const category = await AdminController.getModel(req, Category);
     if(category.name === "CastError"){
-        res.redirect('/404');
+        res.render('admin/404', {publicPath, url: req.url});
     }else{
         res.render('admin/editcategory', {publicPath, category});
     }
@@ -149,7 +151,7 @@ app.get('/admin/article/:id/edit', async (req, res) => {
     const categories = await AdminController.listModel(Category);
     const article = await AdminController.getModel(req, Article);
     if(article.name === "CastError"){
-        res.redirect('/404');
+        res.render('admin/404', {publicPath, url: req.url});
     }else{
         res.render('admin/editarticle', {publicPath, article, categories});
     }
@@ -161,7 +163,7 @@ app.post('/admin/article/:id/edit', async (req, res) => {
 });
 
 app.get('/admin/article/:id/delete', async (req, res) => {
-    await ArticleController.deleteArticle(req, Article);
+    await ArticleController.deleteArticle(req, fs, Article, Comment);
     res.redirect('/admin/article');
 });
 
@@ -185,7 +187,7 @@ app.post('/admin/author', async (req, res) => {
 app.get('/admin/author/:id/edit', async (req, res) => {
     const author = await AdminController.getModel(req, Author);
     if(author.name === "CastError"){
-        res.redirect('/404');
+        res.render('admin/404', {publicPath, url: req.url});
     }else{
         res.render('admin/editauthor', {publicPath, author});
     }
@@ -197,7 +199,7 @@ app.post('/admin/author/:id/edit', async (req, res) => {
 });
 
 app.get('/admin/author/:id/delete', async (req, res) => {
-    await AuthorController.deleteAuthor(req, Author);
+    await AuthorController.deleteAuthor(req, fs, Author, Article);
     res.redirect('/admin/author');
 });
 
