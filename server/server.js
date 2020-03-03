@@ -15,6 +15,7 @@ const {Author} = require('./models/author');
 const {Article} = require('./models/article');
 const {Comment} = require('./models/comment');
 const {Category} = require('./models/category');
+const {authenticate} = require('./middleware/authenticate');
 
 const AdminController = require('./controllers/admin');
 const ArticleController = require('./controllers/article');
@@ -29,11 +30,11 @@ const publicPath = "/../../../";
 
 app.use(
     bodyParser.urlencoded({ extended: false }),
-    cookieParser("keyboard_cat"),
+    cookieParser(),
     session({ 
-        secret: "keyboard_cat",
+        secret: process.env.JWT_SECRET,
         cookie: { maxAge: 60000 },
-        resave: false,
+        resave: true,
         saveUninitialized: false
     }),
     flash(),
@@ -86,13 +87,13 @@ app.get('/category/:name', async(req, res) => {
 });
 
 // ADMIN ROUTE
-app.get('/admin/dashboard', async (req, res) => {
+app.get('/admin/dashboard', authenticate, async (req, res) => {
     const overview = await AdminController.getOverview(Article, Author, Category, Comment);
-    res.render('admin/dashboard', {publicPath, overview});
+    res.render('admin/dashboard', {publicPath, overview,  authenticated: req.flash('authenticated')});
 });
 
 // Category
-app.get('/admin/category', async (req, res) => {
+app.get('/admin/category', authenticate, async (req, res) => {
     const categories = await AdminController.listModel(Category);
     res.render('admin/category', {
         publicPath, categories, 
@@ -102,12 +103,12 @@ app.get('/admin/category', async (req, res) => {
     });
 });
 
-app.post('/admin/category', async (req, res) => {
+app.post('/admin/category', authenticate, async (req, res) => {
     await CategoryController.saveCategory(req, Category);
     res.redirect('/admin/category');
 });
 
-app.get('/admin/category/:id/edit', async (req, res) => {
+app.get('/admin/category/:id/edit', authenticate, async (req, res) => {
     const category = await AdminController.getModel(req, Category);
     if(category.name === "CastError"){
         res.render('admin/404', {publicPath, url: req.url});
@@ -116,18 +117,18 @@ app.get('/admin/category/:id/edit', async (req, res) => {
     }
 });
 
-app.post('/admin/category/:id/edit', async (req, res) => {
+app.post('/admin/category/:id/edit', authenticate, async (req, res) => {
     await CategoryController.updateCategory(_, req, Category);
     res.redirect('/admin/category');
 });
 
-app.get('/admin/category/:id/delete', async (req, res) => {
+app.get('/admin/category/:id/delete', authenticate, async (req, res) => {
     await CategoryController.deleteCategory(req, Category, Article);
     res.redirect('/admin/category');
 });
 
 // Article
-app.get('/admin/article', async (req, res) => {
+app.get('/admin/article', authenticate, async (req, res) => {
     const articles = await AdminController.listModel(Article);
     res.render('admin/article', {
         publicPath, articles, 
@@ -137,17 +138,17 @@ app.get('/admin/article', async (req, res) => {
     });
 });
 
-app.get('/admin/article/add', async (req, res) => {
+app.get('/admin/article/add', authenticate, async (req, res) => {
     const categories = await AdminController.listModel(Category);
     res.render('admin/addarticle', {publicPath, categories});
 });
 
-app.post('/admin/article/add', async (req, res) => {
+app.post('/admin/article/add', authenticate, async (req, res) => {
     await ArticleController.saveArticle(req, Article);
     res.redirect('/admin/article');
 });
 
-app.get('/admin/article/:id/edit', async (req, res) => {
+app.get('/admin/article/:id/edit', authenticate, async (req, res) => {
     const categories = await AdminController.listModel(Category);
     const article = await AdminController.getModel(req, Article);
     if(article.name === "CastError"){
@@ -157,18 +158,18 @@ app.get('/admin/article/:id/edit', async (req, res) => {
     }
 });
 
-app.post('/admin/article/:id/edit', async (req, res) => {
+app.post('/admin/article/:id/edit', authenticate, async (req, res) => {
     await ArticleController.updateArticle(_, fs, req, Article);
     res.redirect('/admin/article');
 });
 
-app.get('/admin/article/:id/delete', async (req, res) => {
+app.get('/admin/article/:id/delete', authenticate, async (req, res) => {
     await ArticleController.deleteArticle(req, fs, Article, Comment);
     res.redirect('/admin/article');
 });
 
 // Author
-app.get('/admin/author', async (req, res) => {
+app.get('/admin/author', authenticate, async (req, res) => {
     const authors = await AdminController.listModel(Author);
     res.render('admin/author', {
         publicPath, authors, 
@@ -178,13 +179,13 @@ app.get('/admin/author', async (req, res) => {
     });
 });
 
-app.post('/admin/author', async (req, res) => {
+app.post('/admin/author', authenticate, async (req, res) => {
     await AuthorController.saveAuthor(req, Author);
     
     res.redirect('/admin/author');
 });
 
-app.get('/admin/author/:id/edit', async (req, res) => {
+app.get('/admin/author/:id/edit', authenticate, async (req, res) => {
     const author = await AdminController.getModel(req, Author);
     if(author.name === "CastError"){
         res.render('admin/404', {publicPath, url: req.url});
@@ -193,19 +194,48 @@ app.get('/admin/author/:id/edit', async (req, res) => {
     }
 });
 
-app.post('/admin/author/:id/edit', async (req, res) => {
+app.post('/admin/author/:id/edit', authenticate, async (req, res) => {
     await AuthorController.updateAuthor(_, fs, req, Author);
     res.redirect('/admin/author');
 });
 
-app.get('/admin/author/:id/delete', async (req, res) => {
+app.get('/admin/author/:id/delete', authenticate, async (req, res) => {
     await AuthorController.deleteAuthor(req, fs, Author, Article);
     res.redirect('/admin/author');
 });
 
-
 app.get('/login', (req, res) => {
-    res.render('admin/login', {publicPath});
+    res.render('admin/login', {publicPath, authenticated: req.flash('authenticated')});
+});
+
+app.post('/login', async (req, res) => {
+    try{
+        const body = _.pick(req.body, ['email', 'password']);
+        const author = await Author.findByCredentials(body.email, body.password);
+
+        const authToken = await author.generateAuthToken(); 
+        req.session.authToken = authToken;
+
+        req.flash('authenticated', "You have been successfully authenticated");
+        res.redirect('/admin/dashboard');
+    }catch(error) {
+        req.flash('authenticated', "Oops! Authentication failed, check your login details or contact the Admin.");
+        res.redirect('/login');
+    }
+});
+
+app.post('/logout', authenticate, async (req, res) => {
+    try{
+        const author = req.author;
+        await author.removeToken(req.session.authToken);
+        delete req.session.authToken;
+
+        req.flash('authenticated', "You have been logged out successfully.");
+        res.redirect('/login');
+    }catch(error) {
+        req.flash('authenticated', "Oops! Loggging out unsuccessful");
+        res.redirect('/login');
+    }
 });
 
 app.get('/404', (req, res) => {

@@ -41,7 +41,71 @@ const AuthorSchema = new mongoose.Schema({
         required: true,
         minlength: 6
     },
+    tokens: [{
+        access: {
+            type: String,
+            required: true
+        },
+        token: {
+            type: String,
+            required: true
+        }
+    }]
 });
+
+AuthorSchema.methods.generateAuthToken = function(){
+    var author = this;
+    var access = 'auth';
+    var token = jwt.sign({_id: author._id.toHexString(), access}, process.env.JWT_SECRET).toString();
+
+    author.tokens = author.tokens.concat([{access, token}]);
+    return author.save().then(() => {
+        return token;
+    })
+}
+
+AuthorSchema.methods.removeToken = function(token){
+    var author = this;
+    return author.update({
+        $pull: {
+            tokens: {token}
+        }
+    });
+}
+
+AuthorSchema.statics.findByToken = function(token){
+    var Author = this;
+    var decode;
+    try{
+        decode = jwt.verify(token, process.env.JWT_SECRET)
+    }catch(error){
+        return Promise.reject();
+    }
+
+    return Author.findOne({
+        '_id': decode._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
+    })
+}
+
+AuthorSchema.statics.findByCredentials = function(email, password) {
+    var Author = this;
+    return Author.findOne({email}).then((author) => {
+        if(!author){
+            return Promise.reject();
+        }
+
+        return new Promise((resolve, reject) => {
+            bcrypt.compare(password, author.password, (err, res) => {
+                if(!res){
+                    return reject();
+                }
+                resolve(author);
+            });
+        });
+    });
+};
 
 AuthorSchema.pre('save', function (next) {
     var author = this;
