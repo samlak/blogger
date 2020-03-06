@@ -51,13 +51,25 @@
 
           <!-- Right -->
           <ul class="navbar-nav nav-flex-icons">
-            <a href="/admin/dashboard">
-              <li class="nav-item">
-                <div class="nav-link border border-light rounded waves-effect">
-                  Login
-                </div>
-              </li>
-            </a>
+            <% if(authentication) { %>
+              <a href="/admin/dashboard">
+                <li class="nav-item">
+                  <div class="nav-link border border-light rounded waves-effect">
+                    Dashboard
+                  </div>
+                </li>
+              </a>
+            <% } %>
+            
+            <% if(!authentication) { %>
+              <a href="/login">
+                <li class="nav-item">
+                  <div class="nav-link border border-light rounded waves-effect">
+                    Login
+                  </div>
+                </li>
+              </a>
+            <% } %>
           </ul>
 
         </div>

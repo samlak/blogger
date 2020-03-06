@@ -68,11 +68,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="<%= publicPath %>img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-        </div>
+              
+        <% if(authenticatedAuthor.picture){ %>
+          <div class="image">
+            <img src="<%= publicPath %>upload/<%= authenticatedAuthor.picture %>" class="img-circle elevation-2" style="height:2.1rem !important;"  alt="User Image">
+          </div>
+
+        <% } %>
+        
+        <% if(!authenticatedAuthor){ %>
+          
+          <div class="image">
+            <img src="<%= publicPath %>upload/<%= publicPath %>upload/default/avatar.png" class="img-circle elevation-2" alt="User Image">
+          </div>
+        <% } %>
+
         <div class="info">
-          <a href="#" class="d-block">Salami Haruna</a>
+          <a href="#" class="d-block"><%= authenticatedAuthor.name %></a>
         </div>
       </div>
 
