@@ -122,6 +122,24 @@ AuthorSchema.pre('save', function (next) {
     }
 });
 
+AuthorSchema.pre('findOneAndUpdate', function (next) {
+    
+    var password = this.getUpdate().$set.password;
+    if(!password){
+        return next();
+    }
+
+    try {
+        bcrypt.genSalt(10, (err,  salt) => {
+            bcrypt.hash(password, salt, (err, hash) => {
+                this.getUpdate().$set.password = hash;
+                next();
+            });
+        });
+    }catch (error){
+        return next(error);
+    }
+});
 const Author = mongoose.model('Author', AuthorSchema);
 
 module.exports = {Author};

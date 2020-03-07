@@ -55,11 +55,6 @@
                   </div>
 
                   <div class="form-group">
-                    <label for="password">Author Password</label>
-                    <input type="password" class="form-control" id="password" name="password">
-                  </div>
-                  
-                  <div class="form-group">
                     <label for="picture">Author Profile Picture</label>
                     <div class="custom-file">
                       <input type="file" class="custom-file-input" name="picture" id="customFile">
@@ -82,6 +77,23 @@
             </div>
           </div>
           <!-- /.col-md-6 -->
+          
+          <div class="col-lg-6">
+            <div class="card card-primary card-outline">
+              <div class="card-header">
+                <h5 class="m-0">Change password</h5>
+              </div>
+              <div class="card-body">
+                <form method="POST" action="">
+                  <div class="form-group">
+                    <label for="password">New Password</label>
+                    <input type="password" class="form-control" id="password" name="password" autocomplete="">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Change Password</button>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- /.row -->
       </div><!-- /.container-fluid -->

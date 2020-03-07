@@ -105,12 +105,15 @@ const updateAuthor = async (req, res) => {
     try {
         const thisAuthor = await Author.findById(req.params.id);
 
-        const author = _.pick(req.body, ['name', 'email', 'bio', 'role', 'picture']);
-        author.name = req.body.name;
-        author.email = req.body.email;
-        author.bio = req.body.bio;
-        author.role = req.body.role;
-        // author.password = req.body.password;
+        const author = _.pick(req.body, ['name', 'email', 'bio', 'role', 'picture', 'password']);
+        if(req.body.password){
+            author.password = req.body.password;
+        }else{
+            author.name = req.body.name;
+            author.email = req.body.email;
+            author.bio = req.body.bio;
+            author.role = req.body.role;
+        }
 
         if(req.files){
             if(typeof thisAuthor.picture != 'undefined' && thisAuthor.picture != ''){
@@ -130,6 +133,7 @@ const updateAuthor = async (req, res) => {
             {$set: author},
             {useFindAndModify: false}
         ).then((result) => {
+            console.log(result);
             req.flash('authorUpdated', "Your author has been updated successfully");
         }, (e) => {
             req.flash('authorUpdated', "Error updating your author");
