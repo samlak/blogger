@@ -1,9 +1,14 @@
+const {Author} = require('../models/author');
+const {Article} = require('../models/article');
+const {Comment} = require('../models/comment');
+const {Category} = require('../models/category');
+
 const listModel = async (Model) => {
     try{
         const models = [];
         const model = await Model.find();
-        model.forEach((cat) => {
-            models.push(cat);
+        model.forEach((element) => {
+            models.push(element);
         });
         return models;
     }catch(error) {
@@ -20,13 +25,16 @@ const getModel = async (req, Model) => {
     };  
 };
 
-const getOverview = async (Article, Author, Category, Comment) => {
+const getOverview = async (req, res) => {
     const articles = await Article.find().countDocuments();
     const authors = await Author.find().countDocuments();
     const categories = await Category.find().countDocuments();
     const comments = await Comment.find().countDocuments();
 
-    return {articles, authors, categories, comments};
+    const overview = {articles, authors, categories, comments};
+    const authenticated = req.flash('authenticated')
+    
+    res.render('admin/dashboard', {overview, authenticated});
 }
 
 module.exports = {listModel, getModel, getOverview};

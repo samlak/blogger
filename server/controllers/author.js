@@ -1,4 +1,29 @@
-const saveAuthor = async (req, Author) => {
+const fs = require('fs');
+const _ = require('lodash');
+
+const {Article} = require('../models/article');
+const {Author} = require('../models/author');
+
+const AdminController = require('../controllers/admin');
+
+const getAuthor = async (req, res) => {
+    const authors = await AdminController.listModel(Author);
+    const authorCreated = req.flash('authorCreated');
+    const authorDeleted = req.flash('authorDeleted');
+    const authorUpdated = req.flash('authorUpdated');
+    res.render('admin/author', {authors, authorCreated, authorDeleted, authorUpdated});
+};
+
+const editAuthor = async (req, res) => {
+    const author = await AdminController.getModel(req, Author);
+    if(author.name === "CastError"){
+        res.render('custom/404', {url: req.url});
+    }else{
+        res.render('admin/editauthor', {author});
+    }
+};
+
+const saveAuthor = async (req, res) => {
     try {
         if(req.files){
             var image = req.files.picture;
@@ -31,14 +56,15 @@ const saveAuthor = async (req, Author) => {
         }, (e) => {
             req.flash('authorCreated', "Error creating a new author");
         });
-
+        
+        res.redirect('/admin/author');
     } catch (error) {
         req.flash('authorCreated', "There is problem uploading picture");
-        console.log(error);
+        res.redirect('/admin/author');
     }
 };
 
-const deleteAuthor = async (req, fs, Author, Article) => {
+const deleteAuthor = async (req, res) => {
     await Author.findById(req.params.id).then( async (author) => {
         const editorId = '5e59d76f1c4a961bd4cd92bb';
         if(author._id == editorId){
@@ -67,30 +93,15 @@ const deleteAuthor = async (req, fs, Author, Article) => {
             });
 
         }
+        res.redirect('/admin/author');
     }, (error) => {
         req.flash('authorDeleted', "Error deleting your author");
+        res.redirect('/admin/author');
     });
 
 };
 
-const updateAuthor = async (_, fs, req, Author) => {
-    // const author = _.pick(req.body, ['name', 'email', 'bio', 'role']);
-    // author.name = req.body.name;
-    // author.email = req.body.email;
-    // author.bio = req.body.bio;
-    // author.role = req.body.role;
-    // // author.password = req.body.password;
-
-    // await Author.findByIdAndUpdate(
-    //         req.params.id,
-    //         {$set: author},
-    //         {useFindAndModify: false}
-    //     ).then((result) => {
-    //     req.flash('authorUpdated', "Your author has been updated successfully");
-    // }, (e) => {
-    //     req.flash('authorUpdated', "Error updating your author");
-    // });
-
+const updateAuthor = async (req, res) => {
     try {
         const thisAuthor = await Author.findById(req.params.id);
 
@@ -124,10 +135,11 @@ const updateAuthor = async (_, fs, req, Author) => {
             req.flash('authorUpdated', "Error updating your author");
         });
 
+        res.redirect('/admin/author');
     } catch (error) {
         req.flash('authorUpdated', "There is problem updating your author image");
-        console.log(error);
+        res.redirect('/admin/author');
     }
 };
 
-module.exports = {saveAuthor, deleteAuthor, updateAuthor};
+module.exports = {getAuthor, editAuthor, saveAuthor, deleteAuthor, updateAuthor};

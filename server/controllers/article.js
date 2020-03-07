@@ -1,4 +1,38 @@
-const saveArticle = async (req, Article) => {
+const fs = require('fs');
+const _ = require('lodash');
+
+const {Article} = require('../models/article');
+const {Comment} = require('../models/comment');
+const {Category} = require('../models/category');
+
+const AdminController = require('../controllers/admin');
+
+const getArticle = async (req, res) => {
+    const articles = await AdminController.listModel(Article);
+    
+    const articleCreated = req.flash('articleCreated');
+    const articleDeleted = req.flash('articleDeleted');
+    const articleUpdated = req.flash('articleUpdated');
+
+    res.render('admin/article', {articles, articleCreated, articleDeleted, articleUpdated });
+}
+
+const createArticle = async (req, res) => {
+    const categories = await AdminController.listModel(Category);
+    res.render('admin/addarticle', {categories});
+}
+
+const editArticle = async (req, res) => {
+    const categories = await AdminController.listModel(Category);
+    const article = await AdminController.getModel(req, Article);
+    if(article.name === "CastError"){
+        res.render('custom/404', {url: req.url});
+    }else{
+        res.render('admin/editarticle', {article, categories});
+    }
+}
+
+const saveArticle = async (req, res) => {
     try {
         if(req.files){
             var image = req.files.image;
@@ -29,13 +63,14 @@ const saveArticle = async (req, Article) => {
             req.flash('articleCreated', "There is problem creating a new article");
         });
 
+        res.redirect('/admin/article');
     } catch (error) {
         req.flash('articleCreated', "There is problem uploading image for your new article");
-        console.log(error);
+        res.redirect('/admin/article');
     }
 };
 
-const deleteArticle = async (req, fs, Article, Comment) => {
+const deleteArticle = async (req, res) => {
     try{
         const article = await Article.findById(req.params.id);
 
@@ -54,13 +89,14 @@ const deleteArticle = async (req, fs, Article, Comment) => {
         }, (e) => {
             req.flash('articleDeleted', "Error deleting your article");
         });
+        res.redirect('/admin/article');
     }catch(error){
         req.flash('articleDeleted', "Error deleting your article");
+        res.redirect('/admin/article');
     }
 };
 
-const updateArticle = async (_, fs, req, Article) => {
-  
+const updateArticle = async (req, res) => {
     try {
         const thisArticle = await Article.findById(req.params.id);
 
@@ -93,10 +129,11 @@ const updateArticle = async (_, fs, req, Article) => {
             req.flash('articleUpdated', "Error updating your article");
         });
 
+        res.redirect('/admin/article');
     } catch (error) {
         req.flash('articleUpdated', "There is problem updating your featured image");
-        console.log(error);
+        res.redirect('/admin/article');
     }
 };
 
-module.exports = {saveArticle, deleteArticle, updateArticle};
+module.exports = {getArticle, createArticle, editArticle, saveArticle, deleteArticle, updateArticle};

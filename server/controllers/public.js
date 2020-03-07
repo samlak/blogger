@@ -1,13 +1,11 @@
-const listCategory = async (Category) => {
-    try{
-        const category = await Category.find();
-        return category;
-    }catch(error) {
-        return error;
-    };  
-};
+const {Author} = require('../models/author');
+const {Article} = require('../models/article');
+const {Comment} = require('../models/comment');
+const {Category} = require('../models/category');
 
-const getArticle = async (req, Article) => {
+const AdminController = require('../controllers/admin');
+
+const getArticle = async (req) => {
     try{
         const article = await Article.findOne({slug: req.params.slug})
             .populate('author', 'name bio picture')
@@ -19,7 +17,7 @@ const getArticle = async (req, Article) => {
     };  
 };
 
-const getArticleInCategory = async (name, Category, Article) => {
+const getArticleInCategory = async (name) => {
     try{
         const category = await Category.findOne({name});
         const article = await Article.find({category: category.id});
@@ -29,7 +27,7 @@ const getArticleInCategory = async (name, Category, Article) => {
     };  
 };
 
-const getRelatedArticle = async (req, Article) => {
+const getRelatedArticle = async (req) => {
     try{
         const article = await Article.findOne({slug: req.params.slug});
         const relatedArticles = await Article.find({category: article.category});
@@ -39,7 +37,7 @@ const getRelatedArticle = async (req, Article) => {
     };  
 };
 
-const getTrending = async (Article) => {
+const getTrending = async () => {
     try{
         const article = await Article.find();
         return article;
@@ -48,7 +46,7 @@ const getTrending = async (Article) => {
     };  
 };
 
-const saveComment = async (req, Comment, Article) => {
+const saveComment = async (req, res) => {
     try{
         var comment = new Comment({
             email: req.body.email,
@@ -64,9 +62,48 @@ const saveComment = async (req, Comment, Article) => {
     
         await comment.save();
         req.flash('commentPosted', "Your comment has been posted successfully");
+        res.redirect('/article/'+req.params.slug);
     } catch (error){
         req.flash('commentPosted', "There is problem posting your comment");
+        res.redirect('/article/'+req.params.slug);
     }
 }
 
-module.exports = {listCategory, getArticleInCategory, getTrending, getArticle, saveComment, getRelatedArticle}
+
+const loadHome = async (req, res) => {
+    const categories = await AdminController.listModel(Category);
+    const articles = await AdminController.listModel(Article);
+    res.render('blog/index', {categories, articles});
+};
+
+const loadTrending = async (req, res) => {
+    const articles = await getTrending();
+    res.render('blog/trending', {articles});
+};
+
+const loadArticle = async (req, res) => {
+    const article = await getArticle(req);
+    const relatedArticles = await getRelatedArticle(req);
+    const commentPosted =  req.flash('commentPosted');
+
+    if (article){
+        res.render('blog/article', {
+            article, relatedArticles,
+            commentPosted
+        });
+    }else{
+        res.render('custom/404', {url: req.url});
+    }
+};
+
+const loadCategory = async (req, res) => {
+    const name = req.params.name;
+    const articles = await getArticleInCategory(name);
+    if (articles[0]){
+        res.render('blog/category', {articles});
+    }else{
+        res.render('custom/404', {url: req.url});
+    }
+};
+
+module.exports = {loadHome, loadTrending, loadArticle, loadCategory, getArticleInCategory, getTrending, getArticle, saveComment, getRelatedArticle}
