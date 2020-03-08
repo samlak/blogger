@@ -8,13 +8,18 @@ const {Category} = require('../models/category');
 const AdminController = require('../controllers/admin');
 
 const getArticle = async (req, res) => {
-    const articles = await AdminController.listModel(Article, 0, 0);
-    
+    const resultPerPage  = 10; 
+    const currentPage = req.query.page || 1;
+
+    const articles = await AdminController.listModel(Article, resultPerPage, currentPage);
+    const totalArticle = await AdminController.listModel(Article, 0, 0);
+    const numOfPage = Math.ceil(totalArticle.length / resultPerPage);
+
     const articleCreated = req.flash('articleCreated');
     const articleDeleted = req.flash('articleDeleted');
     const articleUpdated = req.flash('articleUpdated');
 
-    res.render('admin/article', {articles, articleCreated, articleDeleted, articleUpdated });
+    res.render('admin/article', {articles, articleCreated, articleDeleted, articleUpdated, numOfPage, currentPage});
 }
 
 const createArticle = async (req, res) => {
