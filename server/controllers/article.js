@@ -8,7 +8,7 @@ const {Category} = require('../models/category');
 const AdminController = require('../controllers/admin');
 
 const getArticle = async (req, res) => {
-    const articles = await AdminController.listModel(Article);
+    const articles = await AdminController.listModel(Article, 0, 0);
     
     const articleCreated = req.flash('articleCreated');
     const articleDeleted = req.flash('articleDeleted');
@@ -18,12 +18,12 @@ const getArticle = async (req, res) => {
 }
 
 const createArticle = async (req, res) => {
-    const categories = await AdminController.listModel(Category);
+    const categories = await AdminController.listModel(Category, 0, 0);
     res.render('admin/addarticle', {categories});
 }
 
 const editArticle = async (req, res) => {
-    const categories = await AdminController.listModel(Category);
+    const categories = await AdminController.listModel(Category, 0, 0);
     const article = await AdminController.getModel(req, Article);
     if(article.name === "CastError"){
         res.render('custom/404', {url: req.url});

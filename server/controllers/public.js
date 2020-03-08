@@ -17,10 +17,17 @@ const getArticle = async (req) => {
     };  
 };
 
-const getArticleInCategory = async (name) => {
+const getArticleInCategory = async (name, resultPerPage, pageNum) => {
     try{
+        if(resultPerPage == 0){
+            const category = await Category.findOne({name});
+            const article = await Article.findOne({category: category.id});
+            return [article, category];
+        }
         const category = await Category.findOne({name});
-        const article = await Article.find({category: category.id});
+        const article = await Article.find({category: category.id})
+        .skip((resultPerPage * pageNum) - resultPerPage)
+        .limit(resultPerPage);
         return [article, category];
     }catch(error) {
         return error;
@@ -30,7 +37,10 @@ const getArticleInCategory = async (name) => {
 const getRelatedArticle = async (req) => {
     try{
         const article = await Article.findOne({slug: req.params.slug});
-        const relatedArticles = await Article.find({category: article.category});
+        const relatedArticles = await Article.find({
+            category: article.category,
+            _id: {$ne: article._id}
+        }).limit(5);
         return relatedArticles;
     }catch(error) {
         return error;
@@ -71,9 +81,15 @@ const saveComment = async (req, res) => {
 
 
 const loadHome = async (req, res) => {
-    const categories = await AdminController.listModel(Category);
-    const articles = await AdminController.listModel(Article);
-    res.render('blog/index', {categories, articles});
+    const resultPerPage  = 2; 
+    const currentPage = req.query.page || 1;
+
+    const categories = await AdminController.listModel(Category, 0, 0);
+    const articles = await AdminController.listModel(Article, resultPerPage, currentPage);
+    const totalArticle = await AdminController.listModel(Article, 0, 0);
+    const numOfPage = Math.ceil(totalArticle.length / resultPerPage);
+    
+    res.render('blog/index', {categories, articles, numOfPage, currentPage});
 };
 
 const loadTrending = async (req, res) => {
@@ -98,9 +114,14 @@ const loadArticle = async (req, res) => {
 
 const loadCategory = async (req, res) => {
     const name = req.params.name;
-    const articles = await getArticleInCategory(name);
+    const resultPerPage  = 1; 
+    const currentPage = req.query.page || 1;
+
+    const articles = await getArticleInCategory(name, resultPerPage, currentPage);
     if (articles[0]){
-        res.render('blog/category', {articles});
+        const totalArticle = await getArticleInCategory(name, 0, 0);
+        const numOfPage = Math.ceil(totalArticle.length / resultPerPage);
+        res.render('blog/category', {articles, numOfPage, currentPage});
     }else{
         res.render('custom/404', {url: req.url});
     }

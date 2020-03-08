@@ -3,14 +3,16 @@ const {Article} = require('../models/article');
 const {Comment} = require('../models/comment');
 const {Category} = require('../models/category');
 
-const listModel = async (Model) => {
+const listModel = async (Model, resultPerPage, pageNum) => {
     try{
-        const models = [];
-        const model = await Model.find();
-        model.forEach((element) => {
-            models.push(element);
-        });
-        return models;
+        if(resultPerPage == 0){
+            const model = await Model.find();
+            return model;
+        }
+        const model = await Model.find()
+        .skip((resultPerPage * pageNum) - resultPerPage)
+        .limit(resultPerPage);
+        return model;
     }catch(error) {
         return error;
     };  

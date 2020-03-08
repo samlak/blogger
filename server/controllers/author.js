@@ -7,7 +7,7 @@ const {Author} = require('../models/author');
 const AdminController = require('../controllers/admin');
 
 const getAuthor = async (req, res) => {
-    const authors = await AdminController.listModel(Author);
+    const authors = await AdminController.listModel(Author, 0, 0);
     const authorCreated = req.flash('authorCreated');
     const authorDeleted = req.flash('authorDeleted');
     const authorUpdated = req.flash('authorUpdated');

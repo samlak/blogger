@@ -6,7 +6,7 @@ const {Category} = require('../models/category');
 const AdminController = require('../controllers/admin');
 
 const getCategory = async (req, res) => {
-    const categories = await AdminController.listModel(Category);
+    const categories = await AdminController.listModel(Category, 0, 0);
  
     const categoryCreated = req.flash('categoryCreated');
     const categoryDeleted = req.flash('categoryDeleted');
