@@ -8,7 +8,9 @@ const login = async (req, res) => {
         const author = await Author.findByCredentials(body.email, body.password);
 
         const authToken = await author.generateAuthToken(); 
-        req.session.authToken = authToken;
+        // req.session.authToken = authToken;
+        
+        res.cookie('authToken', authToken);
 
         req.flash('authenticated', "You have been successfully authenticated");
         res.redirect('/admin/dashboard');
@@ -21,8 +23,11 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
     try{
         const author = req.author;
-        await author.removeToken(req.session.authToken);
-        delete req.session.authToken;
+        // await author.removeToken(req.session.authToken);
+        // delete req.session.authToken;
+        await author.removeToken(req.cookies.authToken);
+        // delete req.cookies.authToken;
+        res.clearCookie('authToken');
 
         req.flash('authenticated', "You have been logged out successfully.");
         res.redirect('/login');

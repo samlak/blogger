@@ -133,7 +133,6 @@ const updateAuthor = async (req, res) => {
             {$set: author},
             {useFindAndModify: false}
         ).then((result) => {
-            console.log(result);
             req.flash('authorUpdated', "Your author has been updated successfully");
         }, (e) => {
             req.flash('authorUpdated', "Error updating your author");

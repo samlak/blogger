@@ -1,8 +1,9 @@
 const {Author} = require('./../models/author');
 
 const authenticate = (req, res, next) => {
-    req.session.authToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTVlYzdlODM4NTA5MzE1NTAxMzg0MTIiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTgzMjc3ODIyfQ.ZqWB17nuCZT4P8uWa-rY9WW8kbDmklu_6ugtwajqI4Y";
-    var token = req.session.authToken;
+    // req.session.authToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTVlYzdlODM4NTA5MzE1NTAxMzg0MTIiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTgzMjc3ODIyfQ.ZqWB17nuCZT4P8uWa-rY9WW8kbDmklu_6ugtwajqI4Y";
+    // var token = req.session.authToken;
+    var token = req.cookies.authToken;
 
     if(req.url == '/login'){
         if(token){
@@ -29,8 +30,9 @@ const authenticate = (req, res, next) => {
 };
 
 var status = (req, res, next) => {
-    req.session.authToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTVlYzdlODM4NTA5MzE1NTAxMzg0MTIiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTgzMjc3ODIyfQ.ZqWB17nuCZT4P8uWa-rY9WW8kbDmklu_6ugtwajqI4Y";
-    var token = req.session.authToken;
+    // req.session.authToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTVlYzdlODM4NTA5MzE1NTAxMzg0MTIiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTgzMjc3ODIyfQ.ZqWB17nuCZT4P8uWa-rY9WW8kbDmklu_6ugtwajqI4Y";
+    // var token = req.session.authToken;
+    var token = req.cookies.authToken;
 
     Author.findByToken(token).then((author) => {
         if(!author){
