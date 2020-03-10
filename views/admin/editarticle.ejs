@@ -40,7 +40,11 @@
                     <label for="category">Article Category</label>
                     <select class="custom-select" id="category" name="category">
                       <% for(var i = 0; i < categories.length; i++) { %>
-                        <option value="<%= categories[i]._id %>"><%= categories[i].name %></option>
+                        <% if (JSON.stringify(categories[i]._id) === JSON.stringify(article.category)) { %>
+                          <option value="<%= categories[i]._id %>" selected><%= categories[i].name %></option>
+                        <% } else {  %>
+                          <option value="<%= categories[i]._id %>"><%= categories[i].name %></option>
+                        <% }  %>
                       <% }  %>
                     </select>
                   </div>

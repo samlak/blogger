@@ -37,6 +37,9 @@ var ArticleSchema = new mongoose.Schema({
         required: false,
         trim: true
     },
+    views: {
+        type: Number
+    },
     created: {
         type: Date
     }
@@ -44,6 +47,7 @@ var ArticleSchema = new mongoose.Schema({
 
 ArticleSchema.pre('save', function (next) {
     var article = this;
+    article.views = 0;
     article.created = new Date();
     next();
 });

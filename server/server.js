@@ -29,7 +29,10 @@ app.use(
     cookieParser(),
     session({ 
         secret: process.env.JWT_SECRET,
-        cookie: { maxAge: 60000 },
+        cookie: { 
+            maxAge: 60000,
+            expires: new Date(253402300000000)
+        },
         resave: true,
         saveUninitialized: false
     }),

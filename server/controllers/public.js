@@ -3,6 +3,9 @@ const {Article} = require('../models/article');
 const {Comment} = require('../models/comment');
 const {Category} = require('../models/category');
 
+const jsdom = require('jsdom');
+const {JSDOM} = jsdom;
+
 const AdminController = require('../controllers/admin');
 
 const getArticle = async (req) => {
@@ -78,6 +81,30 @@ const saveComment = async (req, res) => {
         res.redirect('/article/'+req.params.slug);
     }
 }
+const listArticle = async (resultPerPage, pageNum) => {
+    try{
+        if(resultPerPage == 0){
+            const article = await Article.find();
+            return article;
+        }
+        const modifiedArticles = []
+        const articles = await Article.find()
+            .skip((resultPerPage * pageNum) - resultPerPage)
+            .limit(resultPerPage);
+        // articles.forEach((article) => {
+        //     var t = $('html *').contents().map(function() {
+        //         return (this.type === 'text') ? $(this).text() : '';
+        //     }).get().join(' ');
+            
+        //     console.log(t);
+            
+        // });
+        // console.log(articles);
+        return articles;
+    }catch(error) {
+        return error;
+    };  
+};
 
 
 const loadHome = async (req, res) => {
@@ -85,8 +112,8 @@ const loadHome = async (req, res) => {
     const currentPage = req.query.page || 1;
 
     const categories = await AdminController.listModel(Category, 0, 0);
-    const articles = await AdminController.listModel(Article, resultPerPage, currentPage);
-    const totalArticle = await AdminController.listModel(Article, 0, 0);
+    const articles = await listArticle(resultPerPage, currentPage);
+    const totalArticle = await listArticle(0, 0);
     const numOfPage = Math.ceil(totalArticle.length / resultPerPage);
     
     res.render('blog/index', {categories, articles, numOfPage, currentPage});
@@ -99,14 +126,29 @@ const loadTrending = async (req, res) => {
 
 const loadArticle = async (req, res) => {
     const article = await getArticle(req);
+
+    // res.clearCookie('article'+article._id);
+    // if(!req.cookies.articles){
+    //     res.cookie('articles', []);
+    //     req.cookies.articles.push(article._id);
+    // }
+
+    console.log(req.cookies['article'+article._id]);
+    
+    if(!req.cookies['article'+article._id]){
+        res.cookie('article'+article._id, article._id, {expires: new Date(253402300000000), httpOnly: true});
+        // req.session.cookie.expires = false;
+        await Article.findOneAndUpdate(
+            {slug: req.params.slug},
+            {$set: {views: Number(article.views) + 1}},
+            {useFindAndModify: false}
+        )
+    }
     const relatedArticles = await getRelatedArticle(req);
     const commentPosted =  req.flash('commentPosted');
 
     if (article){
-        res.render('blog/article', {
-            article, relatedArticles,
-            commentPosted
-        });
+        res.render('blog/article', {article, relatedArticles, commentPosted});
     }else{
         res.render('custom/404', {url: req.url});
     }
@@ -114,7 +156,7 @@ const loadArticle = async (req, res) => {
 
 const loadCategory = async (req, res) => {
     const name = req.params.name;
-    const resultPerPage  = 1; 
+    const resultPerPage  = 10; 
     const currentPage = req.query.page || 1;
 
     const articles = await getArticleInCategory(name, resultPerPage, currentPage);

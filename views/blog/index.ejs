@@ -59,8 +59,8 @@
               <!--Title-->
               <h4 class="card-title"><%= articles[i].title %></h4>
               <!--Text-->
-              <p class="card-text">
-                <%- articles[i].content %>
+              <p class="card-text" id="content">
+                <%- articles[i].content.innerText %>
               </p>
               <a href="/article/<%= articles[i].slug %>" class="btn btn-primary btn-md">Read More
                 <i class="fas fa-play ml-2"></i>
