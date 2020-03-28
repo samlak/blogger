@@ -52,7 +52,7 @@ const getRelatedArticle = async (req) => {
 
 const getTrending = async () => {
     try{
-        const article = await Article.find();
+        const article = await Article.find().sort({views: 'desc'}).limit(10);
         return article;
     }catch(error) {
         return error;
@@ -84,18 +84,32 @@ const saveComment = async (req, res) => {
 const listArticle = async (resultPerPage, pageNum) => {
     try{
         if(resultPerPage == 0){
+            var modifiedArticles = []
             const article = await Article.find();
+            articles.forEach((article) => {
+                let newArticle = {
+                    comments: article.comments,
+                    _id: article._id,
+                    author: article.author,
+                    category: article.category,
+                    title: article.title,
+                    content: article.content,
+                    image: article.image,
+                    views: article.views,
+                    slug: article.slug,
+                }
+                modifiedArticles.push(newArticle);
+            });
+            console.log(modifiedArticles);
             return article;
+            // return article;
         }
-        const modifiedArticles = []
+        // const modifiedArticles = []
         const articles = await Article.find()
             .skip((resultPerPage * pageNum) - resultPerPage)
             .limit(resultPerPage);
         // articles.forEach((article) => {
-        //     var t = $('html *').contents().map(function() {
-        //         return (this.type === 'text') ? $(this).text() : '';
-        //     }).get().join(' ');
-            
+        //     const t = JSDOM(article).text().replace(/\s{2,9999}/g, ' ')
         //     console.log(t);
             
         // });
@@ -108,7 +122,7 @@ const listArticle = async (resultPerPage, pageNum) => {
 
 
 const loadHome = async (req, res) => {
-    const resultPerPage  = 2; 
+    const resultPerPage  = 10; 
     const currentPage = req.query.page || 1;
 
     const categories = await AdminController.listModel(Category, 0, 0);
