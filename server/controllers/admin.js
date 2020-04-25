@@ -32,8 +32,13 @@ const getOverview = async (req, res) => {
     const authors = await Author.find().countDocuments();
     const categories = await Category.find().countDocuments();
     const comments = await Comment.find().countDocuments();
+    const articleViews = await Article.find();
+    const views = articleViews.map(element => element.views)
+        .reduce((value, index) => {
+            return value + index
+        }, 0);
 
-    const overview = {articles, authors, categories, comments};
+    const overview = {articles, authors, categories, comments, views};
     const authenticated = req.flash('authenticated')
     
     res.render('admin/dashboard', {overview, authenticated});

@@ -1,12 +1,22 @@
+const moment = require('moment');
 const {Author} = require('../models/author');
 const {Article} = require('../models/article');
 const {Comment} = require('../models/comment');
 const {Category} = require('../models/category');
 
-const jsdom = require('jsdom');
-const {JSDOM} = jsdom;
-
 const AdminController = require('../controllers/admin');
+
+const modifiedArticles = (articles, charLimit) => {
+    return articles.map((article) => {
+        const regex = /(<([^>]+)>)/ig,
+            body = article.content,
+            result = body.replace(regex, "");        
+        return {
+            ...article._doc,
+            content: result.substring(0, charLimit) + ' ...'
+        }
+    });
+}
 
 const getArticle = async (req) => {
     try{
@@ -31,7 +41,9 @@ const getArticleInCategory = async (name, resultPerPage, pageNum) => {
         const article = await Article.find({category: category.id})
         .skip((resultPerPage * pageNum) - resultPerPage)
         .limit(resultPerPage);
-        return [article, category];
+        
+        const modifiedArticle = modifiedArticles(article, 300);
+        return [modifiedArticle, category];
     }catch(error) {
         return error;
     };  
@@ -44,7 +56,7 @@ const getRelatedArticle = async (req) => {
             category: article.category,
             _id: {$ne: article._id}
         }).limit(5);
-        return relatedArticles;
+        return modifiedArticles(relatedArticles, 120);
     }catch(error) {
         return error;
     };  
@@ -52,8 +64,8 @@ const getRelatedArticle = async (req) => {
 
 const getTrending = async () => {
     try{
-        const article = await Article.find().sort({views: 'desc'}).limit(10);
-        return article;
+        const articles = await Article.find().sort({views: 'desc'}).limit(10);
+        return modifiedArticles(articles, 300);
     }catch(error) {
         return error;
     };  
@@ -81,40 +93,18 @@ const saveComment = async (req, res) => {
         res.redirect('/article/'+req.params.slug);
     }
 }
+
 const listArticle = async (resultPerPage, pageNum) => {
     try{
-        if(resultPerPage == 0){
-            var modifiedArticles = []
-            const article = await Article.find();
-            articles.forEach((article) => {
-                let newArticle = {
-                    comments: article.comments,
-                    _id: article._id,
-                    author: article.author,
-                    category: article.category,
-                    title: article.title,
-                    content: article.content,
-                    image: article.image,
-                    views: article.views,
-                    slug: article.slug,
-                }
-                modifiedArticles.push(newArticle);
-            });
-            console.log(modifiedArticles);
-            return article;
-            // return article;
-        }
-        // const modifiedArticles = []
-        const articles = await Article.find()
+        let articles = await Article.find()
+            .select("title content slug image")
             .skip((resultPerPage * pageNum) - resultPerPage)
             .limit(resultPerPage);
-        // articles.forEach((article) => {
-        //     const t = JSDOM(article).text().replace(/\s{2,9999}/g, ' ')
-        //     console.log(t);
-            
-        // });
-        // console.log(articles);
-        return articles;
+        if(resultPerPage == 0){
+            articles = await Article.find()
+            .select("title content slug image");
+        }
+        return modifiedArticles(articles, 300);
     }catch(error) {
         return error;
     };  
@@ -129,6 +119,7 @@ const loadHome = async (req, res) => {
     const articles = await listArticle(resultPerPage, currentPage);
     const totalArticle = await listArticle(0, 0);
     const numOfPage = Math.ceil(totalArticle.length / resultPerPage);
+
     
     res.render('blog/index', {categories, articles, numOfPage, currentPage});
 };
@@ -141,13 +132,26 @@ const loadTrending = async (req, res) => {
 const loadArticle = async (req, res) => {
     const article = await getArticle(req);
 
+    const comments = article.comments.map(comment => {
+        return {
+            ...comment._doc,
+            created: moment(comment.created).fromNow()
+        }
+    })
+
+    const modifiedArticle = {
+        ...article._doc,
+        comments,
+        created: moment(article.created).fromNow()
+    };
+    // console.log(comments);
     // res.clearCookie('article'+article._id);
     // if(!req.cookies.articles){
     //     res.cookie('articles', []);
     //     req.cookies.articles.push(article._id);
     // }
 
-    console.log(req.cookies['article'+article._id]);
+    // console.log(req.cookies['article'+article._id]);
     
     if(!req.cookies['article'+article._id]){
         res.cookie('article'+article._id, article._id, {expires: new Date(253402300000000), httpOnly: true});
@@ -156,13 +160,13 @@ const loadArticle = async (req, res) => {
             {slug: req.params.slug},
             {$set: {views: Number(article.views) + 1}},
             {useFindAndModify: false}
-        )
+        );
     }
     const relatedArticles = await getRelatedArticle(req);
     const commentPosted =  req.flash('commentPosted');
 
     if (article){
-        res.render('blog/article', {article, relatedArticles, commentPosted});
+        res.render('blog/article', {article: modifiedArticle, relatedArticles, commentPosted});
     }else{
         res.render('custom/404', {url: req.url});
     }

@@ -33,7 +33,7 @@
               <i class="fas fa-eye"></i> 
               <%= article.views %> view(s)
               <i class="fas fa-clock"></i> 
-              Created
+              <%= article.created %> 
             </div>
           </div>
         </div>
@@ -113,7 +113,9 @@
                     <h5 class="mt-0 font-weight-bold"><%= article.comments[i].name %> 
                       <span class="h6">
                         <i class="fas fa-clock"></i>
-                        5 mins ago
+                        <span class="commentTime">
+                          <%= article.comments[i].created %> 
+                        </span>
                       </span>
                       <a href="" class="pull-right">
                         <i class="fas fa-reply"></i>
@@ -197,7 +199,7 @@
                     <a href="<%= relatedArticles[i].slug %>">
                       <h5 class="mt-0 mb-1 font-weight-bold"><%= relatedArticles[i].title %></h5>
                     </a>
-                    <%= relatedArticles[i].title %>
+                    <%= relatedArticles[i].content %>
                   </div>
                 </li>
               <% } %>
@@ -220,6 +222,4 @@
     <!--Grid row-->
 
   </section>
-  <!--Section: Post-->
-
 <%- include('../partials/blog/footer'); %>
