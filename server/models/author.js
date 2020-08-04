@@ -142,4 +142,16 @@ AuthorSchema.pre('findOneAndUpdate', function (next) {
 });
 const Author = mongoose.model('Author', AuthorSchema);
 
+// require ('../config/config');
+// require ('../db/mongoose');
+// var author = new Author({
+//     name: "admin",
+//     email: "admin@admin.com",
+//     bio: "He is the baddes developer we ever heard",
+//     role: "admin",
+//     password: "password"
+// });
+
+// author.save();
+
 module.exports = {Author};

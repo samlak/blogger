@@ -26,6 +26,10 @@ const editCategory = async (req, res) => {
 }
 
 const saveCategory = async (req, res) => {
+    const validation = req.body.name === '';
+    if(validation){
+        return res.redirect('/admin/category');
+    }
     const category = new Category({
         name: req.body.name,
         description: req.body.description,
@@ -42,8 +46,10 @@ const saveCategory = async (req, res) => {
 
 const deleteCategory = async (req, res) => {
     await Category.findById(req.params.id).then( async (result) => {
-        const generalId = '5e59d6621c4a961bd4cd92ba';
-        if(result._id == generalId){
+        const generalCategory = 'General'; 
+        const generalId = await Category.findOne({name: 'General'}).select('_id');
+
+        if(result.name === generalCategory){
             req.flash('categoryDeleted', "You can not delete this category");
         }else{
             const articles = await Article.find({category: result._id});
@@ -51,7 +57,7 @@ const deleteCategory = async (req, res) => {
                 for(var i = 0; i < articles.length; i++){
                     await Article.findByIdAndUpdate(
                         articles[i]._id, 
-                        {$set: {category: generalId}},
+                        {$set: {category: generalId._id}},
                         {useFindAndModify: false}
                     ).then((result) => {
                     }, (error) => {
@@ -78,6 +84,11 @@ const deleteCategory = async (req, res) => {
 };
 
 const updateCategory = async (req, res) => {
+    
+    const validation = req.body.name === '';
+    if(validation){
+        return res.redirect('/admin/category/'+req.params.id+'/edit');
+    }
     const category = _.pick(req.body, ['name', 'description']);
     category.name = req.body.name;
     category.description = req.body.description;

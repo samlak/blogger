@@ -39,6 +39,11 @@ const editArticle = async (req, res) => {
 
 const saveArticle = async (req, res) => {
     try {
+        const validation = req.body.title === '' || req.body.category === '' || req.body.content === '';
+        if(validation){
+            return res.redirect('/admin/article/add');
+        }
+
         if(req.files){
             var image = req.files.image;
             var modifiedName = new Date().getTime() + image.name ;
@@ -47,7 +52,7 @@ const saveArticle = async (req, res) => {
             await image.mv(path);
         
             var article = new Article({
-                author: "5e4da886e4f93d18a024e699",
+                author: req.author._id,
                 category: req.body.category,
                 title: req.body.title,
                 content: req.body.content,
@@ -55,7 +60,7 @@ const saveArticle = async (req, res) => {
             });
         }else{
             var article = new Article({
-                author: "5e4da886e4f93d18a024e699",
+                author: req.author._id,
                 category: req.body.category,
                 title: req.body.title,
                 content: req.body.content,
@@ -104,6 +109,12 @@ const deleteArticle = async (req, res) => {
 const updateArticle = async (req, res) => {
     try {
         const thisArticle = await Article.findById(req.params.id);
+        
+        const validation = req.body.title === '' || req.body.category === '' || req.body.content === '';
+        if(validation){
+            return res.redirect('/admin/article/'+thisArticle._id+'/edit');
+        }
+
 
         const article = _.pick(req.body, ['category', 'title', 'content', 'image']);
         article.category = req.body.category;

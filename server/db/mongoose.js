@@ -5,6 +5,7 @@ mongoose.connect(process.env.MONGODB_URI, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true
-  });
+  }
+);
 
 module.exports = {mongoose}

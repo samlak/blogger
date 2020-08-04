@@ -16,15 +16,21 @@ const getAuthor = async (req, res) => {
 
 const editAuthor = async (req, res) => {
     const author = await AdminController.getModel(req, Author);
+    const roles = [['admin', 'author'], ['Admin', 'Author']];
     if(author.name === "CastError"){
         res.render('custom/404', {url: req.url});
     }else{
-        res.render('admin/editauthor', {author});
+        res.render('admin/editauthor', {author, roles});
     }
 };
 
 const saveAuthor = async (req, res) => {
     try {
+        const validation = req.body.name === '' || req.body.email === '' || req.body.password === '' || req.body.role === '';
+        if(validation){
+            return res.redirect('/admin/author');
+        }
+
         if(req.files){
             var image = req.files.picture;
             var modifiedName = new Date().getTime() + image.name ;
@@ -46,8 +52,7 @@ const saveAuthor = async (req, res) => {
                 email: req.body.email,
                 bio: req.body.bio,
                 role: req.body.role,
-                password: req.body.password,
-                picture: modifiedName
+                password: req.body.password
             });
         }
 
@@ -107,8 +112,17 @@ const updateAuthor = async (req, res) => {
 
         const author = _.pick(req.body, ['name', 'email', 'bio', 'role', 'picture', 'password']);
         if(req.body.password){
+        
+            const validation = req.body.password === '';
+            if(validation){
+                return res.redirect('/admin/author/'+thisAuthor._id+'/edit');
+            }
             author.password = req.body.password;
-        }else{
+        }else{ 
+            const validation = req.body.name === '' || req.body.email === '' || req.body.password === '' || req.body.role === '';
+            if(validation){
+                return res.redirect('/admin/author/'+thisAuthor._id+'/edit');
+            }
             author.name = req.body.name;
             author.email = req.body.email;
             author.bio = req.body.bio;

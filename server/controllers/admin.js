@@ -39,7 +39,7 @@ const getOverview = async (req, res) => {
         }, 0);
 
     const overview = {articles, authors, categories, comments, views};
-    const authenticated = req.flash('authenticated')
+    const authenticated = req.flash('authenticated');
     
     res.render('admin/dashboard', {overview, authenticated});
 }

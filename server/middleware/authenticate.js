@@ -7,7 +7,7 @@ const authenticate = (req, res, next) => {
 
     if(req.url == '/login'){
         if(token){
-            res.redirect('/admin/dashboard');
+            return res.redirect('/admin/dashboard');
         }else{
             return next();
         }
