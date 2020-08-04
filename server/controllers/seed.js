@@ -1,27 +1,35 @@
-const {Twit} = require("../models/Twit");
-const {User} = require("../models/User");
-const {Comment} = require("../models/Comment");
+const {Author} = require('../models/author');
+const {Article} = require('../models/article');
+const {Comment} = require('../models/comment');
+const {Category} = require('../models/category');
 
-const twitData = require("../data/twits");
-const userData = require("../data/users");
-const commnetData = require("../data/comments");
+const articleData = require("../data/article");
+const authorData = require("../data/author");
+const categoryData = require("../data/category");
+const commentData = require("../data/comment");
 
 const seedToDB = async (req, res) => {
-  await User.deleteMany({}, () => {
-    userData.users.forEach((user) => {
-      new User(user).save();
+  await Author.deleteMany({}, () => {
+    authorData.authors.forEach((author) => {
+      new Author(author).save();
     });
   });
 
-  await Twit.deleteMany({}, () => {
-    twitData.twits.forEach((twit) => {
-      new Twit(twit).save();
+  await Article.deleteMany({}, () => {
+    articleData.articles.forEach((article) => {
+      new Article(article).save();
     });
   });
 
   await Comment.deleteMany({}, () => {
-    commnetData.comments.forEach((comment) => {
+    commentData.comments.forEach((comment) => {
       new Comment(comment).save();
+    });
+  });
+
+  await Category.deleteMany({}, () => {
+    categoryData.categories.forEach((category) => {
+      new Category(category).save();
     });
   });
 

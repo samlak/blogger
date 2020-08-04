@@ -19,6 +19,7 @@ const AuthorController = require('./controllers/author');
 const CategoryController = require('./controllers/category');
 const PublicController = require('./controllers/public');
 const AuthenticationController = require('./controllers/authentication');
+const SeedController = require('./controllers/seed');
 
 const app = express();
 
@@ -54,6 +55,10 @@ app.set('view engine', 'ejs');
 app.locals.publicPath = "/../../../";
 
 // PUBLIC ROUTE
+
+app.get('/seed', async (req, res) => {
+    await SeedController.seedToDB(req, res);
+});
 
 app.get('/', async (req, res) => {
     await PublicController.loadHome(req, res);

@@ -71,7 +71,7 @@ const saveAuthor = async (req, res) => {
 
 const deleteAuthor = async (req, res) => {
     await Author.findById(req.params.id).then( async (author) => {
-        const editorId = '5e59d76f1c4a961bd4cd92bb';
+        const editorId = '5a92b7fdcb71600d68a94093';
         if(author._id == editorId){
             req.flash('authorDeleted', "You can not delete this author");
         }else{
