@@ -1,7 +1,4 @@
-require('./config/default');
-if(process.env.STAGE === "Development") {
-    require('./config/config');
-}
+// require('./config/config');
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
