@@ -183,6 +183,13 @@ app.use(
     },
 );
 
+app.use(function(req, res, next){
+    if(!req.session){
+        return next(new Error('Error ocurred!')) //handle error
+    }
+    next() //otherwise continue
+});
+
 app.listen(port, () => {
     console.log(`Listening to port ${port}`)
 })
